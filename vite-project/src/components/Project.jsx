@@ -29,7 +29,7 @@ const Projects = () => {
 
   const styles = {
     section: {
-      background: '#000',
+      background: "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #434343 100%)",
       color: '#fff',
       padding: '60px 20px',
       textAlign: 'center',

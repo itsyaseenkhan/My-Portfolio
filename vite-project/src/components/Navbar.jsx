@@ -51,7 +51,7 @@ const Navbar = () => {
         </ul>
 
         <div className="social-icons">
-          <a href="https://github.com" target="_blank" rel="noreferrer">
+          <a href="https://github.com/itsyaseenkhan/My-Portfolio" target="_blank" rel="noreferrer">
             <FaGithub size={20} />
           </a>
           <a href="https://www.linkedin.com/in/muhammad-yaseen-a53757269/" target="_blank" rel="noreferrer">
