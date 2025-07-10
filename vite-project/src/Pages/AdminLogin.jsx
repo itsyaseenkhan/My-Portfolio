@@ -88,7 +88,7 @@ const AdminLogin = () => {
       top: '50%',
       transform: 'translateY(-50%)',
       fontSize: '20px',
-      color: '#fff',
+      color: 'black',
       opacity: 0.8,
       pointerEvents: 'none',
     },
