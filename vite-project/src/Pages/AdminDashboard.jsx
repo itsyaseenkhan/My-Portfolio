@@ -8,7 +8,7 @@ import SkillFoam from './SkillFoam';
 import AdminProject from './AdminProject';
 import AdminEducation from './AdminEducation';
 import AdminContact from '../Pages/AdminContact';
-import '../Pages/AdminDashboard.css';
+import './AdminDashboard.css';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
