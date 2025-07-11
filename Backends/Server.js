@@ -22,7 +22,7 @@ if (!fs.existsSync(uploadDir)) {
 const adminAuthRoutes = require("./routes/adminAuth");
 const adminHomeRoutes = require("./routes/adminHome");
 const AboutRoutes = require("./routes/Adminabout");
-const skillFoamRoutes = require('./routes/skillFoam');
+const SkillFoamRoutes = require('./routes/SkillFoam');
 const projectRoutes = require('./routes/ProjectRoutes');
 const educationRoutes = require('./routes/educationRoutes');
 const contactRoutes = require('./routes/contact');
@@ -30,7 +30,7 @@ const contactRoutes = require('./routes/contact');
 app.use("/api/admin", adminAuthRoutes);
 app.use("/api/adminhome", adminHomeRoutes);
 app.use("/api/about", AboutRoutes); 
-app.use('/api/skillFoam', skillFoamRoutes);
+app.use('/api/SkillFoam', SkillFoamRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/AdminEducation',educationRoutes)
 app.use('/api/contact', contactRoutes);
