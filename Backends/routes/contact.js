@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ContactMessage = require('../models/ContactMessage');
+const ContactMessage = require('../Models/ContactMessage');
 
 // POST /api/contact  <-- already correct
 router.post('/', async (req, res) => {
