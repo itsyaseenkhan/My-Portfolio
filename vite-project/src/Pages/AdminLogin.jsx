@@ -138,7 +138,7 @@ const AdminLogin = () => {
 
       <div style={styles.container}>
         <img src={AdminLogo} alt="Admin logo" style={styles.logo} />
-        <h2 style={styles.title}>Login</h2>
+        <h2 style={styles.title}>Admin Login</h2>
         <form onSubmit={handleLogin} style={styles.form}>
           <div style={styles.inputWrapper}>
             <input
