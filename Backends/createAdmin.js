@@ -11,7 +11,7 @@ mongoose.connect(process.env.MONGO_URI)
 
     const existing = await Admin.findOne({ email });
     if (existing) {
-      console.log("⚠️ Admin already exists");
+      console
     } else {
       const hashed = await bcrypt.hash(password, 10);
 
