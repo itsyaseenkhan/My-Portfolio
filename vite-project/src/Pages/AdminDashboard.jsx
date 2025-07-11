@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import {
-  FaHome, FaUser, FaFileAlt, FaLayerGroup, FaBook, FaEnvelope,
-  FaSignOutAlt, FaBars, FaTimes
-} from 'react-icons/fa';
-
+import {FaHome, FaUser, FaFileAlt, FaLayerGroup, FaBook, FaEnvelope,FaSignOutAlt, FaBars, FaTimes} from 'react-icons/fa';
 import HomeFoam from '../Pages/HomeFoam';
 import AboutFoam from '../Pages/AboutFoam';
 import SkillFoam from './SkillFoam';
