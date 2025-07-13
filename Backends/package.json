@@ -20,8 +20,4 @@
     "multer": "^2.0.1",
     "nodemailer": "^7.0.4"
   }
-  "scripts": {
-  "start": "node server.js"
-}
-
 }
