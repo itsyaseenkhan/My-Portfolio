@@ -38,13 +38,20 @@ app.use('/api/contact', contactRoutes);
 app.use('/uploads', express.static('uploads'));
 
 // MongoDB connect
+// mongoose.connect(process.env.MONGO_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+//   dbName: "Profile"
+// })
+// .then(() => console.log("✅ MongoDB Connected"))
+// .catch(err => console.error("MongoDB connection error:", err));
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   dbName: "Profile"
 })
 .then(() => console.log("✅ MongoDB Connected"))
-.catch(err => console.error("MongoDB connection error:", err));
+.catch(err => console.error("❌ MongoDB connection error:", err));
 
 app.listen(5000, () => {
   console.log("🚀 Server running on http://localhost:5000");
