@@ -50,7 +50,7 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-              <Link to="/admin/login" style={{ color: "white", marginRight: "40px" }}>
+              <Link to="/admin/login" style={{ color: "white", marginRight: "10px" }}>
                 Dashboard
               </Link>
 
