@@ -26,7 +26,7 @@ const App = () => {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
         <Route path="/admin/reset-password/:token" element={<AdminResetPassword />} />
-        <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/Admindashboard" element={<AdminDashboard />} />
         <Route path="*" element={ <h2 style={{ textAlign: 'center', marginTop: '100px' }}> 404 - Page Not Found</h2>} />
       </Routes>
     </Router>
