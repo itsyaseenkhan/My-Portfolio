@@ -40,7 +40,7 @@ const Projects = () => {
       marginBottom: '40px',
       textTransform: 'uppercase',
       letterSpacing: '2px',
-      marginTop:'40px',
+      marginTop: '40px',
       fontWeight: 'bold',
       color: '#e1e2e8',
     },
@@ -132,8 +132,9 @@ const Projects = () => {
               onMouseLeave={handleMouseLeave}
             >
               <img
-                src={`https://my-portfolio-backends.onrender.com${project.image}`}
+                src={`https://my-portfolio-backends.onrender.com${project.image}?v=${Date.now()}`}
                 alt="project"
+                onError={(e) => (e.target.src = "/default-fallback.png")}
                 style={styles.image}
               />
               <div className="overlay" style={styles.overlay}>
