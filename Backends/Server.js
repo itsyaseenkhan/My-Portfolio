@@ -35,7 +35,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/AdminEducation',educationRoutes)
 app.use('/api/contact', contactRoutes);
 
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 
 // MongoDB connect
 mongoose.connect(process.env.MONGO_URI, {
