@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import "../Pages/Hero.css";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,6 +49,9 @@ const Navbar = () => {
               <button onClick={() => handleMenuItemClick(item.id)}>{item.label}</button>
             </li>
           ))}
+          <Link to={'/admin/login'}>
+          Dashboard
+          </Link>
         </ul>
 
         <div className="social-icons">
