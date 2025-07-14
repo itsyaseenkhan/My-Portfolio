@@ -22,23 +22,11 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/Home" replace />} />
+        <Route path="/" element={<Home />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
         <Route path="/admin/reset-password/:token" element={<AdminResetPassword />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="HomeFoam" element={<HomeFoam/>} />
-        <Route path="Navbar"  element={<Navbar/>}/>
-         <Route path='AboutFoam'element={<AboutFoam/>} />
-         <Route path='About'element={<About/>}/>
-         <Route path='Skill' element={<Skill/>}/>
-         <Route path='SkillFoam' element={<SkillFoam/>}/>
-         <Route path='AdminProject' element={<AdminProject/>} />
-         <Route path='Project' element={<Project/>}/>
-         <Route path='Education' element={<Education/>} />
-         <Route path='Contact' element={<Contact/>}/>
-         <Route path='AdminContact' element={<AdminContact/>} />
         <Route path="*" element={ <h2 style={{ textAlign: 'center', marginTop: '100px' }}> 404 - Page Not Found</h2>} />
       </Routes>
     </Router>
