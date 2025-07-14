@@ -33,6 +33,9 @@ const Navbar = () => {
     { id: "Project", label: "Project" },
     { id: "Education", label: "Education" },
     { id:  "Contact",   label: "Contact" },
+          <Link to={'/admin/login'} style={{color: "white",  }}>
+          Dashboard
+          </Link>
   ];
 
   return (
@@ -50,9 +53,6 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-          <Link to={'/admin/login'} style={{color: "white",  }}>
-          Dashboard
-          </Link>
 
         <div className="social-icons">
           <a href="https://github.com/itsyaseenkhan/My-Portfolio" target="_blank" rel="noreferrer">
