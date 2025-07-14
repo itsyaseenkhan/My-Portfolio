@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const AboutForm = () => {
   const [formData, setFormData] = useState({
@@ -73,7 +74,7 @@ const AboutForm = () => {
       description: about.description,
       image: null,
     });
-    setFileName(about.image ? about.image : "No file chosen");
+    setFileName(about.image || "No file chosen");
     setEditId(about._id);
     setShowForm(true);
   };
@@ -162,7 +163,7 @@ const AboutForm = () => {
                   name="image"
                   accept="image/*"
                   onChange={handleChange}
-                  required={editId ? false : true}
+                  required={!editId}
                   style={styles.fileInput}
                 />
               </label>
@@ -220,14 +221,15 @@ const AboutForm = () => {
                       : about.description}
                   </td>
                   <td style={styles.td}>
-                    <button onClick={() => handleEdit(about)} style={styles.actionButton}>
-                      Edit
+                    <button onClick={() => handleEdit(about)} style={styles.iconButton} title="Edit">
+                      <FaEdit />
                     </button>
                     <button
                       onClick={() => handleDelete(about._id)}
-                      style={{ ...styles.actionButton, ...styles.deleteButton }}
+                      style={{ ...styles.iconButton, ...styles.deleteIcon }}
+                      title="Delete"
                     >
-                      Delete
+                      <FaTrash />
                     </button>
                   </td>
                 </tr>
@@ -369,19 +371,16 @@ const styles = {
     borderBottom: "1px solid #e5e7eb",
     color: "#4b5563",
   },
-  actionButton: {
-    padding: "0.5rem 1rem",
-    backgroundColor: "#3b82f6",
-    color: "white",
+  iconButton: {
+    background: "none",
     border: "none",
-    borderRadius: "6px",
-    fontSize: "0.875rem",
-    fontWeight: "500",
     cursor: "pointer",
+    fontSize: "1.2rem",
+    color: "#3b82f6",
     marginRight: "0.5rem",
   },
-  deleteButton: {
-    backgroundColor: "#ef4444",
+  deleteIcon: {
+    color: "#ef4444",
   },
 };
 
