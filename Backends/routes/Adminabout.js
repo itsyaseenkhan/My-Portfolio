@@ -3,11 +3,14 @@ const router = express.Router();
 const multer = require("multer");
 const About = require("../Models/About");
 const path = require("path");
+const fs = require("fs");
 
 // Multer Config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    const uploadDir = path.join(__dirname, "..", "uploads");
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -16,66 +19,52 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// CREATE About Profile
+// POST - Create About
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { name, title, description } = req.body;
-    const imagePath = req.file ? req.file.filename : "";
+    const image = req.file?.filename;
 
-    const about = new About({
-      name,
-      title,
-      description,
-      image: imagePath
-    });
-
+    const about = new About({ name, title, description, image });
     await about.save();
-    res.json({ message: "About profile created", data: about });
+
+    res.json({ message: "About created", data: about });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Failed to create about" });
   }
 });
 
-// GET All About Profiles
+// GET - All About Data
 router.get("/", async (req, res) => {
   try {
     const abouts = await About.find();
     res.json(abouts);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Failed to get abouts" });
   }
 });
 
-// UPDATE About Profile
+// PUT - Update About
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const { name, title, description } = req.body;
     const updateData = { name, title, description };
+    if (req.file) updateData.image = req.file.filename;
 
-    if (req.file) {
-      updateData.image = req.file.filename;
-    }
-
-    const updatedAbout = await About.findByIdAndUpdate(req.params.id, updateData, {
-      new: true
-    });
-
-    res.json({ message: "About updated", data: updatedAbout });
+    const updated = await About.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    res.json({ message: "Updated", data: updated });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "Failed to update about" });
   }
 });
 
-// DELETE About Profile
+// DELETE
 router.delete("/:id", async (req, res) => {
   try {
     await About.findByIdAndDelete(req.params.id);
-    res.json({ message: "Deleted successfully" });
+    res.json({ message: "Deleted" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: "Failed to delete about" });
   }
 });
 
