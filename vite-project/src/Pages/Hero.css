@@ -25,7 +25,6 @@
   flex: 1 1 500px;
   animation: fadeInLeft 1s ease forwards;
   opacity: 0;
-  margin-left: 5%;
 }
 
 .hero-text h1 {
@@ -97,7 +96,6 @@
   width: clamp(180px, 40vw, 480px);
   height: clamp(180px, 40vw, 480px);
   border-radius: 50%;
-  margin-top: 45px;
   padding: 8px;
   background: linear-gradient(135deg, #9333ea, #38bdf8);
   display: flex;
@@ -146,33 +144,25 @@
 
 /* RESPONSIVE DESIGN */
 
-/* Tablet & below */
+/* Tablets and below */
 @media (max-width: 1024px) {
   .hero-container {
     flex-direction: column-reverse;
     text-align: center;
     padding: 60px 20px;
   }
-
-  .hero-text {
-    margin-left: 0;
-  }
 }
 
-/* Small Tablets / Large Phones */
+/* Tablets / Large Phones */
 @media (max-width: 768px) {
-  .hero-text {
-    margin-top: -40px;
-  }
-
   .hero-text h1 {
-    font-size: 2.2rem;
+    font-size: 2.1rem;
   }
 
   .hero-text p {
     font-size: 1rem;
-    margin: 0 auto 28px;
     padding: 0 10px;
+    margin-bottom: 24px;
   }
 
   .download-btn {
@@ -184,11 +174,11 @@
 /* Mobile */
 @media (max-width: 480px) {
   .hero-container {
-    padding: 50px 16px;
+    padding: 40px 16px;
   }
 
   .hero-text {
-    margin-top: -900px;
+    margin: 0;
   }
 
   .hero-text h1 {
@@ -201,13 +191,13 @@
   }
 
   .typed-span {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   .hero-text p {
     font-size: 0.95rem;
     padding: 0 6px;
-    margin: 0 auto 24px;
+    margin: 0 auto 20px;
   }
 
   .download-btn {
@@ -217,9 +207,9 @@
   }
 
   .image-border {
-    width: 220px;
-    height: 220px;
-    margin: 0 auto 20px;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
   }
 }
 
