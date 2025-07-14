@@ -51,7 +51,7 @@ const Navbar = () => {
           ))}
         </ul>
               <div style={{ display: 'flex' }}>
-  <Link to="/admin/login" style={{ color: "white", marginLeft: "auto" }}>
+  <Link to="/admin/login" style={{ color: "white", marginLeft: "25%" }}>
     Dashboard
   </Link>
 </div>
