@@ -50,11 +50,10 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-              <div style={{ display: 'flex' }}>
-            <Link to="/admin/login" style={{ color: "white", marginLeft: "25%" }}>
+            <Link to="/admin/login" style={{ color: "white", }}>
              Dashboard
              </Link>
-              </div>
+             
 
 
         <div className="social-icons">
