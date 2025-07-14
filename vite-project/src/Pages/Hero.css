@@ -86,7 +86,6 @@
 
 /* IMAGE SECTION */
 .hero-image {
-  flex: 1 1 400px;
   display: flex;
   justify-content: center;
   animation: zoomIn 1s ease forwards;
