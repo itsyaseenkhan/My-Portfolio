@@ -49,10 +49,10 @@ const Navbar = () => {
               <button onClick={() => handleMenuItemClick(item.id)}>{item.label}</button>
             </li>
           ))}
+        </ul>
           <Link to={'/admin/login'}>
           Dashboard
           </Link>
-        </ul>
 
         <div className="social-icons">
           <a href="https://github.com/itsyaseenkhan/My-Portfolio" target="_blank" rel="noreferrer">
