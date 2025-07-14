@@ -107,7 +107,7 @@ const About = () => {
         <div key={item._id} style={contentStyle}>
           <div style={imgWrapperStyle}>
             <img
-              src={`https://my-portfolio-backends.onrender.com/${item.image}`}
+             src={`https://my-portfolio-backends.onrender.com/uploads/${item.image}`}
               alt={item.name}
               style={imgStyle}
             />
