@@ -51,10 +51,11 @@ const Navbar = () => {
           ))}
         </ul>
               <div style={{ display: 'flex' }}>
-  <Link to="/admin/login" style={{ color: "white", marginLeft: "25%" }}>
-    Dashboard
-  </Link>
-</div>
+            <Link to="/admin/login" style={{ color: "white", marginLeft: "85%" }}>
+             Dashboard
+             </Link>
+              </div>
+
 
         <div className="social-icons">
           <a href="https://github.com/itsyaseenkhan/My-Portfolio" target="_blank" rel="noreferrer">
