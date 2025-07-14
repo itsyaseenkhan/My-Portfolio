@@ -74,13 +74,11 @@ const About = () => {
 
   const textStyle = {
     maxWidth: "600px",
- 
   };
 
   const headingStyle = {
     fontSize: isMobile ? "32px" : "40px",
     marginBottom: "12px",
-  
   };
 
   const highlightStyle = {
@@ -101,28 +99,28 @@ const About = () => {
 
   return (
     <div className="admin-about-form" id="about">
-    <div style={containerStyle}>
-      {aboutData.length === 0 && <p>Loading...</p>}
-      {aboutData.map((item) => (
-        <div key={item._id} style={contentStyle}>
-          <div style={imgWrapperStyle}>
-            <img
-             src={`https://my-portfolio-backends.onrender.com/uploads/${item.image}`}
-              alt={item.name}
-              style={imgStyle}
-            />
-          </div>
+      <div style={containerStyle}>
+        {aboutData.length === 0 && <p>Loading...</p>}
+        {aboutData.map((item) => (
+          <div key={item._id} style={contentStyle}>
+            <div style={imgWrapperStyle}>
+              <img
+                src={`https://my-portfolio-backends.onrender.com/uploads/${item.image}`} // ✅ Corrected path
+                alt={item.name}
+                style={imgStyle}
+              />
+            </div>
 
-          <div style={textStyle}>
-            <h2 style={headingStyle}>
-              About <span style={highlightStyle}>Me</span>
-            </h2>
-            <h3 style={titleStyle}>{item.title}</h3>
-            <p style={descStyle}>{item.description}</p>
+            <div style={textStyle}>
+              <h2 style={headingStyle}>
+                About <span style={highlightStyle}>Me</span>
+              </h2>
+              <h3 style={titleStyle}>{item.title}</h3>
+              <p style={descStyle}>{item.description}</p>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
     </div>
   );
 };
