@@ -21,12 +21,12 @@ export default function AdminDashboard() {
     const token = localStorage.getItem("adminToken");
     if (!token) return navigate("/admin/login");
 
-    axios.get("http://localhost:5000/api/admin/me", {
+    axios.get("https://my-portfolio-backends.onrender.com/api/admin/me", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => {
       setAdminName(res.data.name);
-      setAdminImage(`http://localhost:5000/${res.data.image || "default.png"}`);
+      setAdminImage(`https://my-portfolio-backends.onrender.com/${res.data.image || "default.png"}`);
     })
     .catch(() => navigate("/admin/login"));
   }, [navigate]);

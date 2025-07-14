@@ -14,7 +14,7 @@ const AdminForgotPassword = () => {
     setError('');
 
     try {
-      const res = await axios.post("http://localhost:5000/api/admin/forgot-password", { email });
+      const res = await axios.post("https://my-portfolio-backends.onrender.com/api/admin/forgot-password", { email });
 
       const token = res.data.token; // ✅ Backend must return this token
 

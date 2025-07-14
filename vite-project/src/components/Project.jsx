@@ -4,7 +4,7 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/projects')
+    fetch('https://my-portfolio-backends.onrender.com/api/projects')
       .then(res => res.json())
       .then(data => setProjects(data));
   }, []);
@@ -132,7 +132,7 @@ const Projects = () => {
               onMouseLeave={handleMouseLeave}
             >
               <img
-                src={`http://localhost:5000${project.image}`}
+                src={`https://my-portfolio-backends.onrender.com${project.image}`}
                 alt="project"
                 style={styles.image}
               />

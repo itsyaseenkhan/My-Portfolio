@@ -19,7 +19,7 @@ const AboutForm = () => {
 
   const fetchAboutData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/about");
+      const res = await axios.get("https://my-portfolio-backends.onrender.com/api/about");
       setAboutList(res.data);
     } catch (err) {
       console.error("Error fetching about data:", err);
@@ -49,12 +49,12 @@ const AboutForm = () => {
 
       if (editId) {
         // Update existing record
-        await axios.put(`http://localhost:5000/api/about/${editId}`, data, {
+        await axios.put(`https://my-portfolio-backends.onrender.com/api/about/${editId}`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
         // Create new record
-        await axios.post("http://localhost:5000/api/about", data, {
+        await axios.post("https://my-portfolio-backends.onrender.com/api/about", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
@@ -83,7 +83,7 @@ const AboutForm = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this about section?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/about/${id}`);
+        await axios.delete(`https://my-portfolio-backends.onrender.com/api/about/${id}`);
         fetchAboutData();
         alert("About section deleted successfully!");
       } catch (err) {

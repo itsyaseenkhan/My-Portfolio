@@ -8,7 +8,7 @@ const Education = () => {
   useEffect(() => {
     const fetchEducation = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/AdminEducation");
+        const res = await axios.get("https://my-portfolio-backends.onrender.com/api/AdminEducation");
         setEducations(res.data);
       } catch (err) {
         console.error("❌ Failed to fetch education:", err);

@@ -7,7 +7,7 @@ const About = () => {
   useEffect(() => {
     const fetchAbout = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/about");
+        const res = await fetch("https://my-portfolio-backends.onrender.com/api/about");
         const data = await res.json();
         setAboutData(data);
       } catch (err) {
@@ -107,7 +107,7 @@ const About = () => {
         <div key={item._id} style={contentStyle}>
           <div style={imgWrapperStyle}>
             <img
-              src={`http://localhost:5000/${item.image}`}
+              src={`https://my-portfolio-backends.onrender.com/${item.image}`}
               alt={item.name}
               style={imgStyle}
             />

@@ -19,7 +19,7 @@ const AdminEducation = () => {
   const fetchEducations = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/AdminEducation");
+      const res = await axios.get("https://my-portfolio-backends.onrender.com/api/AdminEducation");
       setEducations(res.data);
       setError(null);
     } catch (err) {
@@ -43,9 +43,9 @@ const AdminEducation = () => {
     setIsLoading(true);
     try {
       if (editId) {
-        await axios.put(`http://localhost:5000/api/AdminEducation/${editId}`, formData);
+        await axios.put(`https://my-portfolio-backends.onrender.com/api/AdminEducation/${editId}`, formData);
       } else {
-        await axios.post("http://localhost:5000/api/AdminEducation", formData);
+        await axios.post("https://my-portfolio-backends.onrender.com/api/AdminEducation", formData);
       }
       resetForm();
       fetchEducations();
@@ -68,7 +68,7 @@ const AdminEducation = () => {
     if (window.confirm("Are you sure you want to delete this record?")) {
       setIsLoading(true);
       try {
-        await axios.delete(`http://localhost:5000/api/AdminEducation/${id}`);
+        await axios.delete(`https://my-portfolio-backends.onrender.com/api/AdminEducation/${id}`);
         fetchEducations();
       } catch (err) {
         console.error("Delete error:", err);

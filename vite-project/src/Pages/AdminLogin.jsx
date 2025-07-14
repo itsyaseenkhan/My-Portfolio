@@ -14,7 +14,7 @@ const AdminLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/admin/login", { email, password });
+      const res = await axios.post("https://my-portfolio-backends.onrender.com/api/admin/login", { email, password });
       localStorage.setItem("adminToken", res.data.token);
       alert("✅ Login successful");
       setTimeout(() => navigate("/admindashboard"), 1000);

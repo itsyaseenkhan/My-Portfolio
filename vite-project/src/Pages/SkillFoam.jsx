@@ -6,7 +6,7 @@ const SkillManager = () => {
   const [showForm, setShowForm] = useState(false);
   const [newSkill, setNewSkill] = useState({ name: '', percentage: '', type: 'technical' });
   const [editId, setEditId] = useState(null);
-  const API_URL = 'http://localhost:5000/api/skillFoam';
+  const API_URL = 'https://my-portfolio-backends.onrender.com/api/skillFoam';
 
   const fetchSkills = async () => {
     try {

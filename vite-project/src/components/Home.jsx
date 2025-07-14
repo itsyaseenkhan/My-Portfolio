@@ -13,7 +13,7 @@ const Home = () => {
   const typedRef = useRef(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/adminhome")
+    fetch("https://my-portfolio-backends.onrender.com/api/adminhome")
       .then(res => res.json())
       .then(data => setData(data));
   }, []);
@@ -53,7 +53,7 @@ const Home = () => {
       <div className="hero-image"> 
         <div className="image-border">
           <img 
-            src={`http://localhost:5000/${imageUrl}`} 
+            src={`https://my-portfolio-backends.onrender.com/${imageUrl}`} 
             alt="Profile" 
           />
         </div>

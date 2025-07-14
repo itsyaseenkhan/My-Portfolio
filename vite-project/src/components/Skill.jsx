@@ -11,7 +11,7 @@ const Skill = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/skillFoam');
+        const res = await fetch('https://my-portfolio-backends.onrender.com/api/skillFoam');
         const data = await res.json();
         setSkills(data);
         setLoading(false);

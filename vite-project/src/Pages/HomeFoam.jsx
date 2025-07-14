@@ -10,7 +10,7 @@ function HomeForm() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/adminhome")
+    fetch("https://my-portfolio-backends.onrender.com/api/adminhome")
       .then(res => res.json())
       .then(data => {
         setForm(f => ({
@@ -41,7 +41,7 @@ function HomeForm() {
     payload.append("cvLink", form.cvLink); 
     if (form.imageFile) payload.append("image", form.imageFile);
 
-    await fetch("http://localhost:5000/api/adminhome", {
+    await fetch("https://my-portfolio-backends.onrender.com/api/adminhome", {
       method: "POST",
       body: payload
     });

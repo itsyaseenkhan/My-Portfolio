@@ -15,7 +15,7 @@ const AdminProject = () => {
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/projects');
+      const res = await fetch('https://my-portfolio-backends.onrender.com/api/projects');
       const data = await res.json();
       setProjects(data);
     } catch (error) {
@@ -41,8 +41,8 @@ const AdminProject = () => {
       if (imageFile) data.append('image', imageFile);
 
       const url = editingId 
-        ? `http://localhost:5000/api/projects/${editingId}`
-        : 'http://localhost:5000/api/projects';
+        ? `https://my-portfolio-backends.onrender.com/api/projects/${editingId}`
+        : 'https://my-portfolio-backends.onrender.com/api/projects';
 
       const method = editingId ? 'PUT' : 'POST';
 
@@ -71,7 +71,7 @@ const AdminProject = () => {
     
     setIsLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
+      const res = await fetch(`https://my-portfolio-backends.onrender.com/api/projects/${id}`, {
         method: 'DELETE'
       });
 
@@ -446,7 +446,7 @@ const AdminProject = () => {
                 <tr key={project._id}>
                   <td style={styles.td}>
                     <img
-                      src={`http://localhost:5000${project.image}`}
+                      src={`https://my-portfolio-backends.onrender.com${project.image}`}
                       alt={project.title}
                       style={styles.projectImage}
                     />

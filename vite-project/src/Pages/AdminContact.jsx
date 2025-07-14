@@ -11,7 +11,7 @@ const AdminContact = () => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/contact");
+      const res = await fetch("https://my-portfolio-backends.onrender.com/api/contact");
       if (!res.ok) throw new Error('Failed to fetch messages');
       const data = await res.json();
       setMessages(data.reverse());
@@ -33,7 +33,7 @@ const AdminContact = () => {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/contact/${id}`, {
+      const res = await fetch(`https://my-portfolio-backends.onrender.com/api/contact/${id}`, {
         method: 'DELETE'
       });
 
