@@ -178,7 +178,7 @@
   }
 
   .hero-text {
-    margin: 0;
+    margin: 10px;
   }
 
   .hero-text h1 {
@@ -209,7 +209,7 @@
   .image-border {
     width: 200px;
     height: 200px;
-    margin: 0 auto;
+    margin: 10px auto;
   }
 }
 
