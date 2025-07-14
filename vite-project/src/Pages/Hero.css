@@ -15,7 +15,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 40px;
-  background: radial-gradient(circle at top left, #2a2e1a,   rgb(35, 51, 63) ,  #0f0f1a);
+  background: radial-gradient(circle at top left, #2a2e1a, rgb(35, 51, 63), #0f0f1a);
   color: #fff;
   overflow: hidden;
 }
@@ -25,7 +25,7 @@
   flex: 1 1 500px;
   animation: fadeInLeft 1s ease forwards;
   opacity: 0;
-   margin-left: 5%;
+  margin-left: 5%;
 }
 
 .hero-text h1 {
@@ -94,8 +94,8 @@
 }
 
 .image-border {
-  width: clamp(160px, 40vw, 480px);
-  height: clamp(160px, 40vw, 480px);
+  width: clamp(180px, 40vw, 480px);
+  height: clamp(180px, 40vw, 480px);
   border-radius: 50%;
   margin-top: 45px;
   padding: 8px;
@@ -145,53 +145,84 @@
 }
 
 /* RESPONSIVE DESIGN */
+
+/* Tablet & below */
 @media (max-width: 1024px) {
   .hero-container {
     flex-direction: column-reverse;
     text-align: center;
-    padding: 70px 20px;
-  
+    padding: 60px 20px;
+  }
+
+  .hero-text {
+    margin-left: 0;
   }
 }
 
+/* Small Tablets / Large Phones */
 @media (max-width: 768px) {
-  .hero-container {
-    flex-direction: column-reverse; 
-    text-align: center;
-    padding: 80px 20px;
+  .hero-text {
+    margin-top: -40px;
   }
 
-  .hero-text{
-    margin-top: -70px;
+  .hero-text h1 {
+    font-size: 2.2rem;
   }
+
   .hero-text p {
-    margin-top: -45px;
-    margin: 0 auto 30px;
+    font-size: 1rem;
+    margin: 0 auto 28px;
+    padding: 0 10px;
+  }
+
+  .download-btn {
+    padding: 12px 24px;
+    font-size: 0.95rem;
   }
 }
 
+/* Mobile */
 @media (max-width: 480px) {
+  .hero-container {
+    padding: 50px 16px;
+  }
+
+  .hero-text {
+    margin-top: -80px;
+  }
+
+  .hero-text h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-text h2 {
+    font-size: 1.1rem;
+    min-height: auto;
+  }
+
+  .typed-span {
+    font-size: 0.95rem;
+  }
+
+  .hero-text p {
+    font-size: 0.95rem;
+    padding: 0 6px;
+    margin: 0 auto 24px;
+  }
+
   .download-btn {
     width: 100%;
     padding: 12px;
     font-size: 0.9rem;
   }
 
-  .hero-text p {
-    font-size: 1rem;
-  }
-
-   .hero-text{
-     margin-top: -190px;
-   }
-  .typed-span {
-    font-size: 1rem;
-  }
-
   .image-border {
-    margin: 20px auto 0;
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 20px;
   }
 }
+
 
 
 /* Navbar css */
