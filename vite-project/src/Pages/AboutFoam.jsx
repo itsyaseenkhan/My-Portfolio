@@ -48,12 +48,10 @@ const AboutForm = () => {
       }
 
       if (editId) {
-        // Update existing record
         await axios.put(`https://my-portfolio-backends.onrender.com/api/about/${editId}`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        // Create new record
         await axios.post("https://my-portfolio-backends.onrender.com/api/about", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -109,10 +107,7 @@ const AboutForm = () => {
     <div style={styles.container}>
       <div style={styles.headerContainer}>
         <h2 style={styles.header}>About Me</h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          style={styles.addButton}
-        >
+        <button onClick={() => setShowForm(!showForm)} style={styles.addButton}>
           {showForm ? "✕ Close" : "+ Add New"}
         </button>
       </div>
@@ -167,7 +162,7 @@ const AboutForm = () => {
                   name="image"
                   accept="image/*"
                   onChange={handleChange}
-                  required={!editId}
+                  required={editId ? false : true}
                   style={styles.fileInput}
                 />
               </label>
@@ -179,11 +174,7 @@ const AboutForm = () => {
             <button type="submit" style={styles.submitButton}>
               {editId ? "Update" : "Save"}
             </button>
-            <button
-              type="button"
-              onClick={resetForm}
-              style={styles.cancelButton}
-            >
+            <button type="button" onClick={resetForm} style={styles.cancelButton}>
               Cancel
             </button>
           </div>
@@ -195,6 +186,7 @@ const AboutForm = () => {
           <table style={styles.table}>
             <thead>
               <tr>
+                <th style={styles.th}>Image</th>
                 <th style={styles.th}>Name</th>
                 <th style={styles.th}>Title</th>
                 <th style={styles.th}>Description</th>
@@ -204,6 +196,22 @@ const AboutForm = () => {
             <tbody>
               {aboutList.map((about) => (
                 <tr key={about._id}>
+                  <td style={styles.td}>
+                    {about.image ? (
+                      <img
+                        src={`https://my-portfolio-backends.onrender.com/uploads/${about.image}`}
+                        alt={about.name}
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          objectFit: "cover",
+                          borderRadius: "6px",
+                        }}
+                      />
+                    ) : (
+                      "No Image"
+                    )}
+                  </td>
                   <td style={styles.td}>{about.name}</td>
                   <td style={styles.td}>{about.title}</td>
                   <td style={styles.td}>
@@ -212,10 +220,7 @@ const AboutForm = () => {
                       : about.description}
                   </td>
                   <td style={styles.td}>
-                    <button
-                      onClick={() => handleEdit(about)}
-                      style={styles.actionButton}
-                    >
+                    <button onClick={() => handleEdit(about)} style={styles.actionButton}>
                       Edit
                     </button>
                     <button
@@ -266,10 +271,6 @@ const styles = {
     fontSize: "0.875rem",
     fontWeight: "500",
     cursor: "pointer",
-    transition: "all 0.2s ease",
-    ":hover": {
-      backgroundColor: "#2563eb",
-    },
   },
   form: {
     display: "flex",
@@ -288,25 +289,19 @@ const styles = {
     color: "#374151",
   },
   input: {
-    width: "100%",
     padding: "0.875rem 1rem",
     border: "1px solid #d1d5db",
     borderRadius: "8px",
     fontSize: "0.9375rem",
-    transition: "all 0.2s ease",
     backgroundColor: "#f9fafb",
   },
   textarea: {
-    width: "100%",
     padding: "0.875rem 1rem",
     border: "1px solid #d1d5db",
     borderRadius: "8px",
     fontSize: "0.9375rem",
     minHeight: "150px",
-    resize: "vertical",
-    transition: "all 0.2s ease",
     backgroundColor: "#f9fafb",
-    lineHeight: "1.5",
   },
   fileUploadContainer: {
     display: "flex",
@@ -321,11 +316,6 @@ const styles = {
     cursor: "pointer",
     fontSize: "0.875rem",
     fontWeight: "500",
-    transition: "background-color 0.2s ease",
-    whiteSpace: "nowrap",
-    ":hover": {
-      backgroundColor: "#2563eb",
-    },
   },
   fileInput: {
     display: "none",
@@ -333,14 +323,10 @@ const styles = {
   fileName: {
     fontSize: "0.875rem",
     color: "#6b7280",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
   },
   buttonGroup: {
     display: "flex",
     gap: "1rem",
-    marginTop: "1rem",
   },
   submitButton: {
     padding: "0.875rem",
@@ -350,12 +336,7 @@ const styles = {
     borderRadius: "8px",
     fontSize: "1rem",
     fontWeight: "500",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
     flex: 1,
-    ":hover": {
-      backgroundColor: "#2563eb",
-    },
   },
   cancelButton: {
     padding: "0.875rem",
@@ -365,12 +346,7 @@ const styles = {
     borderRadius: "8px",
     fontSize: "1rem",
     fontWeight: "500",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
     flex: 1,
-    ":hover": {
-      backgroundColor: "#e5e7eb",
-    },
   },
   tableContainer: {
     overflowX: "auto",
@@ -379,9 +355,6 @@ const styles = {
   table: {
     width: "100%",
     borderCollapse: "collapse",
-    borderRadius: "8px",
-    overflow: "hidden",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
   },
   th: {
     backgroundColor: "#f9fafb",
@@ -405,17 +378,10 @@ const styles = {
     fontSize: "0.875rem",
     fontWeight: "500",
     cursor: "pointer",
-    transition: "all 0.2s ease",
     marginRight: "0.5rem",
-    ":hover": {
-      backgroundColor: "#2563eb",
-    },
   },
   deleteButton: {
     backgroundColor: "#ef4444",
-    ":hover": {
-      backgroundColor: "#dc2626",
-    },
   },
 };
 
