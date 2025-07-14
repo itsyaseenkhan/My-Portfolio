@@ -15,7 +15,7 @@ mongoose.connect(process.env.MONGO_URI)
     } else {
       const hashed = await bcrypt.hash(password, 10);
 
-      const image = "uploads/WhatsApp Image 2024-08-09 at 17.05.59_48e4d505.jpg"; // ✅ Your default image path
+      const image = "uploads/WhatsApp Image 2024-08-09 at 17.05.59_48e4d505.jpg"; 
 
       await Admin.create({ name, email, password: hashed, image });
       console.log("✅ Admin created with image");
