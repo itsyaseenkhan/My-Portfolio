@@ -19,7 +19,7 @@ const AboutForm = () => {
 
   const fetchAboutData = async () => {
     try {
-      const res = await axios.get("https://my-portfolio-backends.onrender.com/api/about");
+      const res = await axios.get("https://my-portfolio-backends.onrender.com/api/aboutFoam");
       setAboutList(res.data);
     } catch (err) {
       console.error("Error fetching about data:", err);
