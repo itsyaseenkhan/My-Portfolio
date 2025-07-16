@@ -32,7 +32,7 @@ app.use("/api/adminhome", adminHomeRoutes);
 app.use("/api/about", AboutRoutes); 
 app.use('/api/SkillFoam', SkillFoamRoutes);
 app.use('/api/projects', projectRoutes);
-app.use('/api/educationRoutes',educationRoutes)
+app.use('/api/AdminEducation',educationRoutes)
 app.use('/api/contact', contactRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
