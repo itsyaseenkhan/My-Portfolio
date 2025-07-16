@@ -221,8 +221,7 @@
     margin: 0 auto 20px;
   }
 }
-
-/* === SPINNER === */
+/* === ADVANCED SPINNER === */
 .spinner-container {
   display: flex;
   align-items: center;
@@ -232,22 +231,50 @@
 }
 
 .spinner {
-  width: 60px;
-  height: 60px;
-  border: 6px solid #d1d5db; /* light gray */
-  border-top: 6px solid #9333ea; /* purple */
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  background: conic-gradient(#9333ea 10%, transparent 60%);
+  position: relative;
+  animation: spin-3d 1s linear infinite;
+  box-shadow: 0 0 20px #9333ea99;
 }
 
-@keyframes spin {
+.spinner::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  background-color: #1e1e2f;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.spinner::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background-color: #9333ea;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  box-shadow: 0 0 10px #9333ea88;
+}
+
+@keyframes spin-3d {
   0% {
-    transform: rotate(0deg);
+    transform: rotateZ(0deg) rotateX(0deg);
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotateZ(360deg) rotateX(360deg);
   }
 }
+
 
 
 
