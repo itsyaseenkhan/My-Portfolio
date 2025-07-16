@@ -38,7 +38,7 @@ const Home = () => {
   if (!data) {
     return (
       <div className="spinner-container">
-        <div className="spinner"></div>
+        <div className="loader"></div>
       </div>
     );
   }
