@@ -241,8 +241,8 @@
   transform: rotateZ(45deg);
   perspective: 1000px;
   border-radius: 50%;
-  width: 88px;
-  height: 88px;
+  width: 98px;
+  height: 98px;
   color: hsl(264, 81%, 51%);
 }
 
