@@ -154,6 +154,11 @@
   display: flex;
   align-items: center;
 }
+.admin-profile img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
 
 .admin-profile span {
   margin-right: 15px;
