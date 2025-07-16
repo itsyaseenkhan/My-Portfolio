@@ -155,8 +155,9 @@
   align-items: center;
 }
 .admin-profile img{
-  max-width: 40px;
-    border-radius: 50%;
+      height: 80px;
+      width: 100px;
+    
 }
 
 .admin-profile span {
