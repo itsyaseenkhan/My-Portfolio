@@ -156,11 +156,12 @@
 }
 .admin-profile img{
       height: 60px;
-      width: 100px;
+      width: 80px;
     
 }
  .admin-profile .loo{
   border: solid;
+  border-color: #667eea;
   border-radius: 50%;
  }
 
