@@ -71,7 +71,7 @@
 // export default Home;
 import React, { useEffect, useState, useRef } from 'react';
 import Typed from 'typed.js';
-import '../Pages/Hero.css';
+import '../Pages/Hero.css'; // 👈 CSS you wrote is applied here
 import Navbar from '../components/Navbar';
 import About from '../components/About';
 import Skill from '../components/Skill';
@@ -83,7 +83,7 @@ const Home = () => {
   const [data, setData] = useState(null);
   const typedRef = useRef(null);
 
-  // Fetch data on mount
+  // Fetch home data
   useEffect(() => {
     fetch("https://my-portfolio-backends.onrender.com/api/adminhome")
       .then(res => res.json())
@@ -91,7 +91,7 @@ const Home = () => {
       .catch(err => console.error("Fetch error:", err));
   }, []);
 
-  // Initialize Typed.js after data loads
+  // Initialize typed.js
   useEffect(() => {
     if (!data?.roles) return;
 
@@ -105,9 +105,10 @@ const Home = () => {
     return () => typed.destroy();
   }, [data]);
 
+  // Loading state
   if (!data) {
     return (
-      <div style={{ textAlign: "center", marginTop: "100px" }}>
+      <div style={{ textAlign: "center", marginTop: "100px", fontSize: "1.2rem" }}>
         Loading...
       </div>
     );
@@ -141,15 +142,12 @@ const Home = () => {
         <div className="hero-image">
           <div className="image-border">
             <img
-              src={imageUrl}
+              src={
+                imageUrl?.startsWith("http")
+                  ? imageUrl
+                  : `https://my-portfolio-backends.onrender.com/${imageUrl}`
+              }
               alt="Profile"
-              style={{
-                width: "250px",
-                height: "250px",
-                borderRadius: "50%",
-                objectFit: "cover",
-                border: "5px solid #4f46e5",
-              }}
             />
           </div>
         </div>
