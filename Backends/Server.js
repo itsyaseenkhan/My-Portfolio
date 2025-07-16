@@ -37,7 +37,7 @@ app.use('/api/contact', contactRoutes);
 
 app.use("/uploads", express.static("uploads"));
 
-// MongoDB connect
+
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
