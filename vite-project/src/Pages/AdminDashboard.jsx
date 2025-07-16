@@ -88,7 +88,7 @@ export default function AdminDashboard() {
           
           <div className="admin-profile">
             <span> Welcom:{adminName}</span>
-            <img src={adminImage} alt="Admin" className="admin-avatar" />
+             <img src={adminImage} alt="Admin" style={{ width: 100, height: 100 }} />
           </div>
         </header>
         <main className="dashboard-content">
