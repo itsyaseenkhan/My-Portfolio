@@ -157,9 +157,13 @@
 .admin-profile img{
       height: 60px;
       width: 100px;
-      border-radius: 50px;
     
 }
+ .admin-profile .loo{
+  border: solid;
+  border-radius: 50%;
+ }
+
 
 .admin-profile span {
   margin-right: 15px;
