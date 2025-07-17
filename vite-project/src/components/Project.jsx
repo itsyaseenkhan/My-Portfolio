@@ -132,9 +132,8 @@ const Projects = () => {
               onMouseLeave={handleMouseLeave}
             >
               <img
-                src={`https://my-portfolio-backends.onrender.com${project.image}?v=${Date.now()}`}
+                src={`https://my-portfolio-backends.onrender.com${project.image}`}
                 alt="project"
-                onError={(e) => (e.target.src = "/default-fallback.png")}
                 style={styles.image}
               />
               <div className="overlay" style={styles.overlay}>
