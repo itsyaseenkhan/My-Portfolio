@@ -396,61 +396,57 @@
 
 // export default HomeForm;
 
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
-function HomeForm() {
+const HomeForm = () => {
   const [form, setForm] = useState({
     name: "",
-    roles: "",
     bio: "",
-    imageFile: null,
+    roles: "",
     cvLink: "",
+    imageFile: null,
     imagePreview: ""
   });
+
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ text: "", type: "" });
+
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      const res = await axios.get("https://your-backend-url.com/api/adminhome", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      setForm({
+        name: res.data.name,
+        bio: res.data.bio,
+        roles: res.data.roles.join(", "),
+        cvLink: res.data.cvLink,
+        imageFile: null,
+        imagePreview: res.data.imageUrl,
+      });
+    } catch (err) {
+      console.error(err);
+      setMessage("Login required or error loading data.");
+    }
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const token = localStorage.getItem('adminToken');
-      const res = await axios.get("https://my-portfolio-backends.onrender.com/api/adminhome", {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      setForm({
-        name: res.data.name || "",
-        roles: res.data.roles ? res.data.roles.join(", ") : "",
-        bio: res.data.bio || "",
-        cvLink: res.data.cvLink || "",
-        imageFile: null,
-        imagePreview: res.data.imageUrl || ""
-      });
-    } catch (err) {
-      console.error("Error fetching data:", err);
-      showMessage("Failed to load data. Please login again.", "error");
-    }
-  };
-
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (files && files[0]) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setForm(prev => ({ 
-          ...prev, 
-          imageFile: files[0],
-          imagePreview: reader.result 
-        }));
-      };
-      reader.readAsDataURL(files[0]);
+    if (files && files.length > 0) {
+      setForm(prev => ({
+        ...prev,
+        imageFile: files[0],
+        imagePreview: URL.createObjectURL(files[0]),
+      }));
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
     }
@@ -459,206 +455,50 @@ function HomeForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage({ text: "", type: "" });
+
+    const token = localStorage.getItem("adminToken");
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("bio", form.bio);
+    formData.append("roles", JSON.stringify(form.roles.split(",").map(r => r.trim())));
+    formData.append("cvLink", form.cvLink);
+    if (form.imageFile) {
+      formData.append("image", form.imageFile);
+    }
 
     try {
-      const token = localStorage.getItem('adminToken');
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const formData = new FormData();
-      formData.append('name', form.name);
-      formData.append('bio', form.bio);
-      formData.append('roles', JSON.stringify(form.roles.split(",").map(r => r.trim())));
-      formData.append('cvLink', form.cvLink);
-      
-      if (form.imageFile) {
-        formData.append('image', form.imageFile);
-      }
-
-      const response = await axios.post(
-        "https://my-portfolio-backends.onrender.com/api/adminhome", 
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`
-          }
+      await axios.post("https://your-backend-url.com/api/adminhome", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         }
-      );
-
-      showMessage("Data saved successfully!", "success");
+      });
+      setMessage("Data saved successfully!");
       fetchData();
     } catch (err) {
-      console.error("Save error:", err);
-      showMessage(
-        err.response?.data?.msg || 
-        err.message || 
-        "Error saving data. Please try again.",
-        "error"
-      );
-    } finally {
-      setLoading(false);
+      console.error(err);
+      setMessage("Error saving data.");
     }
-  };
 
-  const showMessage = (text, type) => {
-    setMessage({ text, type });
-    setTimeout(() => setMessage({ text: "", type: "" }), 5000);
-  };
-
-  const styles = {
-    container: {
-      maxWidth: "800px",
-      margin: "2rem auto",
-      padding: "2rem",
-      backgroundColor: "#fff",
-      borderRadius: "8px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
-    },
-    title: {
-      textAlign: "center",
-      marginBottom: "1.5rem",
-      color: "#333"
-    },
-    form: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem"
-    },
-    input: {
-      padding: "0.75rem",
-      border: "1px solid #ddd",
-      borderRadius: "4px",
-      fontSize: "1rem"
-    },
-    textarea: {
-      padding: "0.75rem",
-      border: "1px solid #ddd",
-      borderRadius: "4px",
-      minHeight: "120px",
-      fontSize: "1rem",
-      resize: "vertical"
-    },
-    button: {
-      padding: "0.75rem",
-      backgroundColor: "#4CAF50",
-      color: "white",
-      border: "none",
-      borderRadius: "4px",
-      cursor: "pointer",
-      fontSize: "1rem",
-      marginTop: "1rem",
-      opacity: loading ? 0.7 : 1
-    },
-    imagePreview: {
-      width: "150px",
-      height: "150px",
-      objectFit: "cover",
-      borderRadius: "4px",
-      margin: "0.5rem 0",
-      border: "1px solid #ddd"
-    },
-    message: {
-      padding: "0.75rem",
-      margin: "1rem 0",
-      borderRadius: "4px",
-      backgroundColor: message.type === "error" ? "#ffebee" : "#e8f5e9",
-      color: message.type === "error" ? "#c62828" : "#2e7d32",
-      textAlign: "center"
-    }
+    setLoading(false);
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Home Section Editor</h2>
-      
-      {message.text && (
-        <div style={styles.message}>
-          {message.text}
-        </div>
-      )}
+    <div>
+      <h2>Update Admin Home Info</h2>
+      {message && <p>{message}</p>}
 
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div>
-          <label>Name</label>
-          <input
-            style={styles.input}
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Roles (comma separated)</label>
-          <input
-            style={styles.input}
-            name="roles"
-            value={form.roles}
-            onChange={handleChange}
-            placeholder="Developer, Designer, etc."
-            required
-          />
-        </div>
-
-        <div>
-          <label>Bio</label>
-          <textarea
-            style={styles.textarea}
-            name="bio"
-            value={form.bio}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label>CV Link</label>
-          <input
-            style={styles.input}
-            name="cvLink"
-            value={form.cvLink}
-            onChange={handleChange}
-            placeholder="https://example.com/cv.pdf"
-            required
-          />
-        </div>
-
-        <div>
-          <label>Profile Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleChange}
-            style={{ margin: "0.5rem 0" }}
-          />
-          {form.imagePreview && (
-            <img 
-              src={form.imagePreview} 
-              alt="Preview" 
-              style={styles.imagePreview}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/default-profile.jpg';
-              }}
-            />
-          )}
-        </div>
-
-        <button 
-          type="submit" 
-          style={styles.button}
-          disabled={loading}
-        >
-          {loading ? "Saving..." : "Save Changes"}
-        </button>
+      <form onSubmit={handleSubmit}>
+        <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Name" required />
+        <input type="text" name="roles" value={form.roles} onChange={handleChange} placeholder="Roles (comma separated)" required />
+        <textarea name="bio" value={form.bio} onChange={handleChange} placeholder="Bio" required></textarea>
+        <input type="url" name="cvLink" value={form.cvLink} onChange={handleChange} placeholder="CV Link" required />
+        <input type="file" name="image" accept="image/*" onChange={handleChange} />
+        {form.imagePreview && <img src={form.imagePreview} alt="preview" width="100" />}
+        <button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</button>
       </form>
     </div>
   );
-}
+};
 
 export default HomeForm;
