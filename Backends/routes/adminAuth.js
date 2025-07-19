@@ -1,12 +1,7 @@
 // routes/adminAuth.js
 const express = require("express");
 const router = express.Router();
-const {
-  loginAdmin,
-  getMe,
-  forgotPassword,
-  resetPassword
-} = require("../controllers/adminAuthController"); // ✅ Make sure the file path is correct
+const {loginAdmin,getMe,forgotPassword,resetPassword} = require("../controllers/adminAuthController"); 
 
 router.post("/login", loginAdmin);
 router.get("/me", getMe);
