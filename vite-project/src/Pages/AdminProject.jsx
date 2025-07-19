@@ -25,7 +25,7 @@ const AdminProject = () => {
         throw new Error(data.message || 'Failed to fetch projects');
       }
 
-      setProjects(data.data || []);
+      setProjects(data.data || data || []);
     } catch (error) {
       console.error('Fetch error:', error);
       setError(error.message);
@@ -44,7 +44,6 @@ const AdminProject = () => {
     setError('');
     
     try {
-      // Validate form
       if (!form.title || !form.description || !form.link) {
         throw new Error('All fields are required');
       }
@@ -118,6 +117,7 @@ const AdminProject = () => {
     setImagePreview(project.image ? `https://my-portfolio-backends.onrender.com${project.image}` : '');
     setEditingId(project._id);
     setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleImageChange = (e) => {
@@ -140,28 +140,235 @@ const AdminProject = () => {
     setShowForm(false);
   };
 
-  // Styles and JSX remain the same as your original component
-  // ...
+  // Styles
+  const styles = {
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '1.5rem',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    },
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '2rem',
+      flexWrap: 'wrap',
+      gap: '1rem',
+    },
+    title: {
+      fontSize: '1.5rem',
+      fontWeight: '600',
+      color: '#1e293b',
+      margin: 0,
+    },
+    addButton: {
+      padding: '0.5rem 1rem',
+      backgroundColor: '#3b82f6',
+      color: '#ffffff',
+      border: 'none',
+      borderRadius: '0.375rem',
+      fontWeight: '500',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      transition: 'background-color 0.2s',
+      ':hover': {
+        backgroundColor: '#2563eb',
+      },
+    },
+    formContainer: {
+      maxHeight: showForm ? '800px' : '0',
+      overflow: 'hidden',
+      transition: 'max-height 0.3s ease, padding 0.3s ease',
+      marginBottom: '2rem',
+      backgroundColor: '#ffffff',
+      borderRadius: '0.5rem',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    },
+    form: {
+      padding: '1.5rem',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem',
+    },
+    inputGroup: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+    },
+    input: {
+      padding: '0.75rem',
+      border: '1px solid #e2e8f0',
+      borderRadius: '0.375rem',
+      fontSize: '0.875rem',
+    },
+    submitButton: {
+      padding: '0.75rem 1rem',
+      backgroundColor: '#10b981',
+      color: '#ffffff',
+      border: 'none',
+      borderRadius: '0.375rem',
+      fontWeight: '500',
+      cursor: 'pointer',
+    },
+    projectImage: {
+      width: '80px',
+      height: '60px',
+      borderRadius: '0.25rem',
+      objectFit: 'cover',
+    },
+    error: {
+      color: '#ef4444',
+      backgroundColor: '#fee2e2',
+      padding: '1rem',
+      borderRadius: '0.5rem',
+      marginBottom: '1rem',
+    }
+  };
 
   return (
     <div style={styles.container}>
-      {/* Header and form JSX remains the same */}
-      {/* ... */}
+      <div style={styles.header}>
+        <h2 style={styles.title}>Projects Management</h2>
+        <button
+          style={styles.addButton}
+          onClick={() => {
+            resetForm();
+            setShowForm(!showForm);
+          }}
+          disabled={isLoading}
+        >
+          {showForm ? '✖ Cancel' : '➕ Add Project'}
+        </button>
+      </div>
 
-      {error && (
-        <div style={{ 
-          color: '#ef4444',
-          backgroundColor: '#fee2e2',
-          padding: '1rem',
-          borderRadius: '0.5rem',
-          marginBottom: '1rem'
-        }}>
-          Error: {error}
+      {error && <div style={styles.error}>Error: {error}</div>}
+
+      <div style={styles.formContainer}>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <h3>{editingId ? 'Edit Project' : 'Add New Project'}</h3>
+          
+          <div style={styles.inputGroup}>
+            <label>Title</label>
+            <input
+              type="text"
+              style={styles.input}
+              value={form.title}
+              onChange={(e) => setForm({...form, title: e.target.value})}
+              required
+            />
+          </div>
+          
+          <div style={styles.inputGroup}>
+            <label>Description</label>
+            <input
+              type="text"
+              style={styles.input}
+              value={form.description}
+              onChange={(e) => setForm({...form, description: e.target.value})}
+              required
+            />
+          </div>
+          
+          <div style={styles.inputGroup}>
+            <label>Project Link</label>
+            <input
+              type="url"
+              style={styles.input}
+              value={form.link}
+              onChange={(e) => setForm({...form, link: e.target.value})}
+              required
+            />
+          </div>
+          
+          <div style={styles.inputGroup}>
+            <label>Project Image</label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleImageChange}
+            />
+            {imagePreview && (
+              <img 
+                src={imagePreview} 
+                alt="Preview" 
+                style={{ 
+                  width: '100px', 
+                  height: '100px', 
+                  objectFit: 'cover',
+                  marginTop: '10px'
+                }} 
+              />
+            )}
+          </div>
+          
+          <button
+            type="submit"
+            style={styles.submitButton}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Processing...' : editingId ? 'Update' : 'Add'}
+          </button>
+        </form>
+      </div>
+
+      {isLoading && projects.length === 0 ? (
+        <div>Loading projects...</div>
+      ) : (
+        <div>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Link</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projects.map((project) => (
+                <tr key={project._id}>
+                  <td>
+                    {project.image && (
+                      <img
+                        src={`https://my-portfolio-backends.onrender.com${project.image}`}
+                        alt={project.title}
+                        style={styles.projectImage}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/placeholder.jpg';
+                        }}
+                      />
+                    )}
+                  </td>
+                  <td>{project.title}</td>
+                  <td>{project.description}</td>
+                  <td>
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View
+                    </a>
+                  </td>
+                  <td>
+                    <button onClick={() => handleEdit(project)} disabled={isLoading}>
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(project._id)} disabled={isLoading}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
-
-      {/* Rest of your component JSX */}
-      {/* ... */}
     </div>
   );
 };

@@ -133,9 +133,6 @@ router.get("/", async (req, res) => {
 // Create new project
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    console.log('Request body:', req.body);
-    console.log('Uploaded file:', req.file);
-
     const { title, description, link } = req.body;
 
     // Validate required fields
@@ -151,7 +148,6 @@ router.post("/", upload.single("image"), async (req, res) => {
     });
 
     const savedProject = await newProject.save();
-    console.log('Project saved:', savedProject);
 
     return res.status(201).json({
       success: true,
