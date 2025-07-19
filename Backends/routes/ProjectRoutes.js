@@ -94,7 +94,14 @@ const Project = require("../Models/Project");
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
 });
 
 // Get all projects
@@ -103,28 +110,24 @@ router.get("/", async (req, res) => {
     const projects = await Project.find().sort({ createdAt: -1 });
     res.json(projects);
   } catch (err) {
-    console.error("Error fetching projects:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// Create new project
+// Create project
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { title, description, link } = req.body;
-
     const newProject = new Project({
       title,
       description,
       link,
-      image: req.file?.path || null,
+      image: req.file?.path || null
     });
-
     const savedProject = await newProject.save();
     res.status(201).json(savedProject);
   } catch (err) {
-    console.error("Error creating project:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -132,11 +135,8 @@ router.post("/", upload.single("image"), async (req, res) => {
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" });
-    }
+    if (!project) return res.status(404).json({ message: "Project not found" });
 
-    // Delete old image if new one is uploaded
     if (req.file && project.image) {
       await deleteFromCloudinary(project.image);
     }
@@ -154,8 +154,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 
     res.json(updatedProject);
   } catch (err) {
-    console.error("Error updating project:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -163,11 +162,8 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" });
-    }
+    if (!project) return res.status(404).json({ message: "Project not found" });
 
-    // Delete image from Cloudinary
     if (project.image) {
       await deleteFromCloudinary(project.image);
     }
@@ -175,8 +171,7 @@ router.delete("/:id", async (req, res) => {
     await Project.findByIdAndDelete(req.params.id);
     res.json({ message: "Project deleted successfully" });
   } catch (err) {
-    console.error("Error deleting project:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: err.message });
   }
 });
 

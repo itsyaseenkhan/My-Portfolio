@@ -1,149 +1,94 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://my-portfolio-backends.onrender.com/api/projects')
-      .then(res => res.json())
-      .then(data => setProjects(data));
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('https://my-portfolio-backends.onrender.com/api/projects');
+        const data = await res.json();
+        setProjects(data);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
   }, []);
 
   const handleMouseEnter = (e) => {
-    const card = e.currentTarget;
-    const overlay = card.querySelector('.overlay');
-    const img = card.querySelector('img');
-    card.classList.add('hovered');
-    if (overlay) overlay.style.transform = 'translateY(0)';
-    if (img) img.style.transform = 'scale(1.1)';
+    e.currentTarget.style.transform = 'translateY(-10px)';
+    e.currentTarget.querySelector('.overlay').style.transform = 'translateY(0)';
   };
 
   const handleMouseLeave = (e) => {
-    const card = e.currentTarget;
-    const overlay = card.querySelector('.overlay');
-    const img = card.querySelector('img');
-    card.classList.remove('hovered');
-    if (overlay) overlay.style.transform = 'translateY(100%)';
-    if (img) img.style.transform = 'scale(1)';
-  };
-
-  const styles = {
-    section: {
-      background: "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #434343 100%)",
-      color: '#fff',
-      padding: '60px 20px',
-      textAlign: 'center',
-      minHeight: '100vh',
-    },
-    h2: {
-      fontSize: '36px',
-      marginBottom: '40px',
-      textTransform: 'uppercase',
-      letterSpacing: '2px',
-      marginTop: '40px',
-      fontWeight: 'bold',
-      color: '#e1e2e8',
-    },
-    container: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '20px',
-      justifyContent: 'center',
-    },
-    card: {
-      position: 'relative',
-      width: '380px',
-      height: '280px',
-      overflow: 'hidden',
-      borderRadius: '15px',
-      transition: 'transform 0.4s ease',
-    },
-    image: {
-      width: '100%',
-      height: '100%',
-      objectFit: 'cover',
-      transition: 'transform 0.4s ease',
-    },
-    overlay: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      top: 0,
-      background: 'rgba(0,0,0,0.7)',
-      color: '#fff',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: '20px',
-      transform: 'translateY(100%)',
-      transition: 'transform 0.4s ease',
-      textAlign: 'center',
-    },
-    link: {
-      marginTop: '10px',
-      color: '#06b6d4',
-      fontSize: '22px',
-      textDecoration: 'none',
-    },
+    e.currentTarget.style.transform = 'translateY(0)';
+    e.currentTarget.querySelector('.overlay').style.transform = 'translateY(100%)';
   };
 
   return (
-    <>
-      <style>{`
-        .project-card.hovered {
-          transform: translateY(-10px);
-          box-shadow: 0 15px 30px rgba(254, 245, 245, 0.5);
-        }
-
-        @media (max-width: 768px) {
-          .project-card {
-            width: 90% !important;
-            height: 250px !important;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .project-card {
-            width: 100% !important;
-            height: 230px !important;
-          }
-          .overlay h3 {
-            font-size: 18px !important;
-          }
-          .overlay p {
-            font-size: 14px !important;
-          }
-        }
-      `}</style>
-
-      <div className="admin-Project-form" id="Project"></div>
-
-      <div style={styles.section}>
-        <h2 style={styles.h2}>Latest Projects</h2>
-        <div style={styles.container}>
-          {projects.map((project, i) => (
+    <div style={{ 
+      background: "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #434343 100%)",
+      color: '#fff',
+      padding: '60px 20px',
+      textAlign: 'center'
+    }}>
+      <h2 style={{ fontSize: '36px', marginBottom: '40px' }}>Latest Projects</h2>
+      
+      {loading ? (
+        <div>Loading projects...</div>
+      ) : (
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '20px', 
+          justifyContent: 'center' 
+        }}>
+          {projects.map((project) => (
             <div
-              key={i}
-              className="project-card"
-              style={styles.card}
+              key={project._id}
+              style={{ 
+                position: 'relative',
+                width: '380px',
+                height: '280px',
+                overflow: 'hidden',
+                borderRadius: '15px',
+                transition: 'transform 0.4s ease'
+              }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               <img
-                src={`https://my-portfolio-backends.onrender.com${project.image}`}
-                alt="project"
-                style={styles.image}
+                src={project.image ? `https://my-portfolio-backends.onrender.com${project.image}` : '/placeholder.jpg'}
+                alt={project.title}
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  transition: 'transform 0.4s ease'
+                }}
               />
-              <div className="overlay" style={styles.overlay}>
+              <div style={{ 
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'rgba(0,0,0,0.7)',
+                color: '#fff',
+                padding: '20px',
+                transform: 'translateY(100%)',
+                transition: 'transform 0.4s ease'
+              }}>
                 <h3>{project.title}</h3>
                 <p>{project.description}</p>
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={styles.link}
+                <a 
+                  href={project.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ color: '#06b6d4' }}
                 >
                   🔗 Visit
                 </a>
@@ -151,8 +96,8 @@ const Projects = () => {
             </div>
           ))}
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 
