@@ -30,22 +30,40 @@ const handleError = (res, status, message, error = null) => {
   });
 };
 
+// Default profile image URL (can be replaced with your own default image URL)
+const DEFAULT_PROFILE_IMAGE = 'https://res.cloudinary.com/demo/image/upload/v1627580143/default-avatar.png';
+
 router.get('/', async (req, res) => {
   try {
     let data = await AdminHome.findOne();
+    
+    // If no data exists, create default data
     if (!data) {
       data = await AdminHome.create({
-        name: 'Default Name',
-        bio: 'Default bio',
+        name: 'Your Name',
+        bio: 'A short bio about yourself',
         roles: ['Developer'],
-        imageUrl: '',
+        imageUrl: DEFAULT_PROFILE_IMAGE,
         cvLink: ''
       });
+    } 
+    // If imageUrl is empty or not set, use the default image
+    else if (!data.imageUrl) {
+      data.imageUrl = DEFAULT_PROFILE_IMAGE;
+      await data.save();
     }
-    res.json(data);
+
+    res.json({
+      success: true,
+      data: {
+        ...data._doc,
+        // Ensure we always return a valid image URL
+        imageUrl: data.imageUrl || DEFAULT_PROFILE_IMAGE
+      }
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: 'Server error', error: err.message });
+    console.error('Error in GET /adminhome:', err);
+    handleError(res, 500, 'Failed to fetch profile data', err);
   }
 });
 
