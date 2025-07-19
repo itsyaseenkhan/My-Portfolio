@@ -247,11 +247,11 @@ const Home = () => {
         <div className="hero-image">
           <div className="image-border">
           <img
-  src={data.imageUrl}
-  alt="Profile"
-  onError={(e) => e.target.src = "/default-profile.jpg"}
-  style={{ width: "200px", height: "200px", borderRadius: "50%" }}
-/> 
+            src={data.imageUrl}
+            alt="Profile"
+            onError={(e) => e.target.src = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
+            style={{ width: "200px", height: "200px", borderRadius: "50%", objectFit: 'cover' }}
+          />
           </div>
         </div>
       </div>
