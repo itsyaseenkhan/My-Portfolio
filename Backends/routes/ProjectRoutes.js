@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const Project = require('../models/Project'); // Assuming you have a Project model
+const Project = require('../Models/Project'); // Assuming you have a Project model
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
