@@ -12,16 +12,21 @@ const AdminProject = () => {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const fetchProjects = async () => {
     setIsLoading(true);
+    setError('');
     try {
       const res = await fetch('https://my-portfolio-backends.onrender.com/api/projects');
+      if (!res.ok) {
+        throw new Error('Failed to fetch projects');
+      }
       const data = await res.json();
-      setProjects(data);
+      setProjects(data.data || []);
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to load projects');
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -32,6 +37,7 @@ const AdminProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
     try {
       const formData = new FormData();
@@ -51,187 +57,31 @@ const AdminProject = () => {
         body: formData,
       });
 
-      if (!res.ok) throw new Error('Failed to save project');
+      const result = await res.json();
 
-      alert(editingId ? 'Updated successfully!' : 'Added successfully!');
+      if (!res.ok) {
+        throw new Error(result.message || 'Failed to save project');
+      }
+
+      alert(editingId ? 'Project updated successfully!' : 'Project added successfully!');
       resetForm();
       fetchProjects();
     } catch (error) {
       console.error('Error:', error);
-      alert(error.message);
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure?')) return;
-    
-    setIsLoading(true);
-    try {
-      const res = await fetch(`https://my-portfolio-backends.onrender.com/api/projects/${id}`, {
-        method: 'DELETE'
-      });
-      if (!res.ok) throw new Error('Failed to delete');
-      alert('Deleted successfully!');
-      fetchProjects();
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to delete');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleEdit = (project) => {
-    setForm({
-      title: project.title,
-      description: project.description,
-      link: project.link
-    });
-    setImagePreview(project.image ? `https://my-portfolio-backends.onrender.com${project.image}` : '');
-    setEditingId(project._id);
-    setShowForm(true);
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const resetForm = () => {
-    setForm({ title: '', description: '', link: '' });
-    setImageFile(null);
-    setImagePreview('');
-    setEditingId(null);
-    setShowForm(false);
-  };
-
-  const styles = {
-    container: { maxWidth: '1200px', margin: '0 auto', padding: '1.5rem' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' },
-    formContainer: { 
-      maxHeight: showForm ? '800px' : '0', 
-      overflow: 'hidden', 
-      transition: 'max-height 0.3s ease', 
-      marginBottom: '2rem' 
-    },
-    form: { padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' },
-    input: { padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: '0.375rem' },
-    previewImage: { width: '100px', height: '100px', objectFit: 'cover', marginTop: '10px' }
-  };
+  // ... (keep other functions like handleDelete, handleEdit, etc.)
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2>Projects Management</h2>
-        <button onClick={() => { resetForm(); setShowForm(!showForm); }} disabled={isLoading}>
-          {showForm ? '✖ Cancel' : '➕ Add Project'}
-        </button>
-      </div>
-
-      <div style={styles.formContainer}>
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <h3>{editingId ? 'Edit Project' : 'Add Project'}</h3>
-          
-          <div>
-            <label>Title</label>
-            <input
-              type="text"
-              style={styles.input}
-              value={form.title}
-              onChange={(e) => setForm({...form, title: e.target.value})}
-              required
-            />
-          </div>
-          
-          <div>
-            <label>Description</label>
-            <input
-              type="text"
-              style={styles.input}
-              value={form.description}
-              onChange={(e) => setForm({...form, description: e.target.value})}
-              required
-            />
-          </div>
-          
-          <div>
-            <label>Link</label>
-            <input
-              type="url"
-              style={styles.input}
-              value={form.link}
-              onChange={(e) => setForm({...form, link: e.target.value})}
-              required
-            />
-          </div>
-          
-          <div>
-            <label>Image</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            {imagePreview && <img src={imagePreview} alt="Preview" style={styles.previewImage} />}
-          </div>
-          
-          <div>
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? 'Processing...' : editingId ? 'Update' : 'Add'}
-            </button>
-            <button type="button" onClick={resetForm} disabled={isLoading}>
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {isLoading && projects.length === 0 ? (
-        <div>Loading...</div>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Link</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {projects.map((project) => (
-              <tr key={project._id}>
-                <td>
-                  <img 
-                    src={project.image ? `https://my-portfolio-backends.onrender.com${project.image}` : ''} 
-                    alt={project.title} 
-                    style={{ width: '80px', height: '60px', objectFit: 'cover' }} 
-                  />
-                </td>
-                <td>{project.title}</td>
-                <td>{project.description}</td>
-                <td>
-                  <a href={project.link} target="_blank" rel="noopener noreferrer">
-                    View
-                  </a>
-                </td>
-                <td>
-                  <button onClick={() => handleEdit(project)} disabled={isLoading}>
-                    Edit
-                  </button>
-                  <button onClick={() => handleDelete(project._id)} disabled={isLoading}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+    <div>
+      {/* Error display */}
+      {error && <div style={{ color: 'red', margin: '10px 0' }}>{error}</div>}
+      
+      {/* Rest of your component JSX */}
     </div>
   );
 };
