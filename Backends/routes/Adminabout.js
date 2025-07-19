@@ -73,29 +73,6 @@ router.delete("/:id", async (req, res) => {
 
 module.exports = router;
 
-// // @ -0,0 +1,57 @@
-// const express = require("express");
-// const router = express.Router();
-// const multer = require("multer");
-// const About = require("../Models/About");
-
-// // Multer config
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "uploads/");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + "-" + file.originalname);
-//   }
-// });
-// const upload = multer({ storage: storage });
-
-// // Create About Profile
-// router.post("/", upload.single("image"), async (req, res) => {
-//   try {
-//     const { name, title, description } = req.body;
-//     const imagePath = req.file ? req.file.path : "";
-
 //     const about = new About({
 //       name,
 //       title,

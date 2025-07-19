@@ -1,28 +1,41 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const Project = require('../Models/Project');
 
 const router = express.Router();
 
-// Multer config
+// Ensure uploads folder exists
+const uploadDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Multer disk storage config for local uploads
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+  destination: (req, file, cb) => {
+    cb(null, uploadDir); // folder to save
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + '-' + file.originalname;
+    cb(null, uniqueName);
   }
 });
+
 const upload = multer({ storage });
 
 // CREATE a new project
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { title, description, link } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : '';
+    let imageUrl = '';
 
-    const newProject = new Project({ title, description, link, image });
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`; // relative path to access in frontend
+    }
+
+    const newProject = new Project({ title, description, link, image: imageUrl });
     await newProject.save();
 
     res.status(201).json({ message: 'Project created successfully' });
@@ -58,7 +71,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    res.json({ message: 'Project updated successfully' });
+    res.json({ message: 'Project updated successfully', updated });
   } catch (err) {
     console.error('Error updating project:', err);
     res.status(500).json({ error: 'Server error' });
@@ -80,6 +93,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
+
 // const express = require('express');
 // const multer = require('multer');
 // const path = require('path');
