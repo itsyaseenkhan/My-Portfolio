@@ -397,7 +397,6 @@
 // export default HomeForm;
 
 
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -407,8 +406,11 @@ function HomeForm() {
     roles: "",
     bio: "",
     imageFile: null,
-    cvLink: ""
+    cvLink: "",
+    imagePreview: ""
   });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ text: "", type: "" });
 
   useEffect(() => {
     fetchData();
@@ -422,58 +424,233 @@ function HomeForm() {
         roles: res.data.roles ? res.data.roles.join(", ") : "",
         bio: res.data.bio || "",
         cvLink: res.data.cvLink || "",
-        imageFile: null
+        imageFile: null,
+        imagePreview: res.data.imageUrl || ""
       });
     } catch (err) {
       console.error("Error fetching data:", err);
+      showMessage("Failed to load data", "error");
     }
   };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files && files[0]) {
-      setForm(prev => ({ ...prev, imageFile: files[0] }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm(prev => ({ 
+          ...prev, 
+          imageFile: files[0],
+          imagePreview: reader.result 
+        }));
+      };
+      reader.readAsDataURL(files[0]);
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
     }
   };
 
+  const uploadToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'portfolio_preset'); // Create this in Cloudinary
+    
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      formData
+    );
+    return response.data.secure_url;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("roles", JSON.stringify(form.roles.split(",").map(r => r.trim())));
-    formData.append("bio", form.bio);
-    formData.append("cvLink", form.cvLink);
-    if (form.imageFile) formData.append("image", form.imageFile);
+    setLoading(true);
+    setMessage({ text: "", type: "" });
 
     try {
-      await axios.post("https://my-portfolio-backends.onrender.com/api/adminhome", formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      alert("Data saved successfully!");
+      let imageUrl = form.imagePreview;
+      
+      // Upload new image if selected
+      if (form.imageFile) {
+        imageUrl = await uploadToCloudinary(form.imageFile);
+      }
+
+      // Prepare the data to send to backend
+      const dataToSend = {
+        name: form.name,
+        bio: form.bio,
+        roles: form.roles.split(",").map(r => r.trim()),
+        cvLink: form.cvLink,
+        imageUrl: imageUrl
+      };
+
+      await axios.post(
+        "https://my-portfolio-backends.onrender.com/api/adminhome", 
+        dataToSend
+      );
+
+      showMessage("Data saved successfully!", "success");
       fetchData();
     } catch (err) {
       console.error("Error saving data:", err);
-      alert("Error saving data. Please try again.");
+      showMessage("Error saving data. Please try again.", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showMessage = (text, type) => {
+    setMessage({ text, type });
+    setTimeout(() => setMessage({ text: "", type: "" }), 5000);
+  };
+
+  const styles = {
+    container: {
+      maxWidth: "800px",
+      margin: "2rem auto",
+      padding: "2rem",
+      backgroundColor: "#fff",
+      borderRadius: "8px",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+    },
+    title: {
+      textAlign: "center",
+      marginBottom: "1.5rem",
+      color: "#333"
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "1rem"
+    },
+    input: {
+      padding: "0.75rem",
+      border: "1px solid #ddd",
+      borderRadius: "4px",
+      fontSize: "1rem"
+    },
+    textarea: {
+      padding: "0.75rem",
+      border: "1px solid #ddd",
+      borderRadius: "4px",
+      minHeight: "120px",
+      fontSize: "1rem",
+      resize: "vertical"
+    },
+    button: {
+      padding: "0.75rem",
+      backgroundColor: "#4CAF50",
+      color: "white",
+      border: "none",
+      borderRadius: "4px",
+      cursor: "pointer",
+      fontSize: "1rem",
+      marginTop: "1rem",
+      opacity: loading ? 0.7 : 1
+    },
+    imagePreview: {
+      width: "150px",
+      height: "150px",
+      objectFit: "cover",
+      borderRadius: "4px",
+      margin: "0.5rem 0",
+      border: "1px solid #ddd"
+    },
+    message: {
+      padding: "0.75rem",
+      margin: "1rem 0",
+      borderRadius: "4px",
+      backgroundColor: message.type === "error" ? "#ffebee" : "#e8f5e9",
+      color: message.type === "error" ? "#c62828" : "#2e7d32",
+      textAlign: "center"
     }
   };
 
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Home Section Editor</h2>
+      
+      {message.text && (
+        <div style={styles.message}>
+          {message.text}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} style={styles.form}>
-        {/* Form fields remain the same as before */}
-        {/* ... */}
+        <div>
+          <label>Name</label>
+          <input
+            style={styles.input}
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Roles (comma separated)</label>
+          <input
+            style={styles.input}
+            name="roles"
+            value={form.roles}
+            onChange={handleChange}
+            placeholder="Developer, Designer, etc."
+            required
+          />
+        </div>
+
+        <div>
+          <label>Bio</label>
+          <textarea
+            style={styles.textarea}
+            name="bio"
+            value={form.bio}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div>
+          <label>CV Link</label>
+          <input
+            style={styles.input}
+            name="cvLink"
+            value={form.cvLink}
+            onChange={handleChange}
+            placeholder="https://example.com/cv.pdf"
+            required
+          />
+        </div>
+
+        <div>
+          <label>Profile Image</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={handleChange}
+            style={{ margin: "0.5rem 0" }}
+          />
+          {form.imagePreview && (
+            <img 
+              src={form.imagePreview} 
+              alt="Preview" 
+              style={styles.imagePreview}
+            />
+          )}
+        </div>
+
+        <button 
+          type="submit" 
+          style={styles.button}
+          disabled={loading}
+        >
+          {loading ? "Saving..." : "Save Changes"}
+        </button>
       </form>
     </div>
   );
 }
-
-const styles = {
-  // Your existing styles
-};
 
 export default HomeForm;
