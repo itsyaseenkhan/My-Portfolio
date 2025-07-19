@@ -141,7 +141,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const { storage, deleteFromCloudinary } = require("../utils/cloudinary");
-const AdminHome = require("../models/AdminHome");
+const AdminHome = require("../Models/AdminHome");
 
 const upload = multer({ storage });
 
