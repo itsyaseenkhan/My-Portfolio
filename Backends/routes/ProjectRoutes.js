@@ -90,7 +90,7 @@ const express = require("express");
 const router = express.Router();
 const { storage, deleteFromCloudinary } = require('../utils/cloudinary');
 const multer = require('multer');
-const Project = require("../models/Project");
+const Project = require("../Models/Project");
 
 const upload = multer({ 
   storage: storage,
