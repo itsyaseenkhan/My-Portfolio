@@ -246,14 +246,12 @@ const Home = () => {
         </div>
         <div className="hero-image">
           <div className="image-border">
-            <img 
-              src={data.imageUrl} 
-              alt="Profile" 
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/default-profile.jpg';
-              }}
-            />
+          <img
+  src={data.imageUrl}
+  alt="Profile"
+  onError={(e) => e.target.src = "/default-profile.jpg"}
+  style={{ width: "200px", height: "200px", borderRadius: "50%" }}
+/> 
           </div>
         </div>
       </div>
