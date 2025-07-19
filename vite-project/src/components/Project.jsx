@@ -3,30 +3,56 @@ import React, { useState, useEffect } from 'react';
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
+        setLoading(true);
         const res = await fetch('https://my-portfolio-backends.onrender.com/api/projects');
+        
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.status}`);
+        }
+        
         const data = await res.json();
-        setProjects(data);
+        
+        // Handle different response formats
+        const projectsData = Array.isArray(data) ? data : 
+                           (data.data && Array.isArray(data.data)) ? data.data : 
+                           [];
+        
+        setProjects(projectsData);
+        setError(null);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Fetch error:', error);
+        setError(error.message);
+        setProjects([]); // Ensure we have an empty array
       } finally {
         setLoading(false);
       }
     };
+
     fetchProjects();
   }, []);
 
   const handleMouseEnter = (e) => {
     e.currentTarget.style.transform = 'translateY(-10px)';
-    e.currentTarget.querySelector('.overlay').style.transform = 'translateY(0)';
+    const overlay = e.currentTarget.querySelector('.overlay');
+    if (overlay) overlay.style.transform = 'translateY(0)';
   };
 
   const handleMouseLeave = (e) => {
     e.currentTarget.style.transform = 'translateY(0)';
-    e.currentTarget.querySelector('.overlay').style.transform = 'translateY(100%)';
+    const overlay = e.currentTarget.querySelector('.overlay');
+    if (overlay) overlay.style.transform = 'translateY(100%)';
+  };
+
+  // Default image fallback
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '/placeholder.jpg';
+    return imagePath.startsWith('http') ? imagePath : 
+           `https://my-portfolio-backends.onrender.com${imagePath}`;
   };
 
   return (
@@ -34,12 +60,21 @@ const Projects = () => {
       background: "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #434343 100%)",
       color: '#fff',
       padding: '60px 20px',
-      textAlign: 'center'
+      textAlign: 'center',
+      minHeight: '100vh'
     }}>
       <h2 style={{ fontSize: '36px', marginBottom: '40px' }}>Latest Projects</h2>
       
+      {error && (
+        <div style={{ color: '#ff6b6b', marginBottom: '20px' }}>
+          Error loading projects: {error}
+        </div>
+      )}
+
       {loading ? (
         <div>Loading projects...</div>
+      ) : projects.length === 0 ? (
+        <div>No projects found</div>
       ) : (
         <div style={{ 
           display: 'flex', 
@@ -49,29 +84,34 @@ const Projects = () => {
         }}>
           {projects.map((project) => (
             <div
-              key={project._id}
+              key={project._id || Math.random()}
               style={{ 
                 position: 'relative',
                 width: '380px',
                 height: '280px',
                 overflow: 'hidden',
                 borderRadius: '15px',
-                transition: 'transform 0.4s ease'
+                transition: 'transform 0.4s ease',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
               }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               <img
-                src={project.image ? `https://my-portfolio-backends.onrender.com${project.image}` : '/placeholder.jpg'}
-                alt={project.title}
+                src={getImageUrl(project.image)}
+                alt={project.title || 'Project'}
                 style={{ 
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
                   transition: 'transform 0.4s ease'
                 }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/placeholder.jpg';
+                }}
               />
-              <div style={{ 
+              <div className="overlay" style={{ 
                 position: 'absolute',
                 bottom: 0,
                 left: 0,
@@ -82,16 +122,18 @@ const Projects = () => {
                 transform: 'translateY(100%)',
                 transition: 'transform 0.4s ease'
               }}>
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <a 
-                  href={project.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  style={{ color: '#06b6d4' }}
-                >
-                  🔗 Visit
-                </a>
+                <h3>{project.title || 'Untitled Project'}</h3>
+                <p>{project.description || 'No description available'}</p>
+                {project.link && (
+                  <a 
+                    href={project.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: '#06b6d4', textDecoration: 'none' }}
+                  >
+                    🔗 Visit Project
+                  </a>
+                )}
               </div>
             </div>
           ))}
