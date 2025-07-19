@@ -140,9 +140,9 @@
 const express = require('express');
 const router = express.Router();
 const AdminHome = require('../Models/AdminHome');
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const jwt = require('jsonwebtoken');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -151,20 +151,43 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Set up Cloudinary storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'portfolio-admin',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-    transformation: [{ width: 800, height: 800, crop: 'limit', quality: 'auto' }]
-  }
-});
-
+// Set up memory storage for multer
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// JWT Verification Middleware
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) return res.status(401).json({ msg: 'No token provided' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.adminId = decoded.id;
+    next();
+  } catch (err) {
+    res.status(401).json({ msg: 'Invalid token' });
+  }
+};
+
+// Upload to Cloudinary helper
+const uploadToCloudinary = async (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'portfolio-admin',
+        transformation: { width: 800, height: 800, crop: 'limit' }
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+};
+
 // GET Admin Home Data
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
     let data = await AdminHome.findOne().sort({ _id: -1 });
     if (!data) {
@@ -184,47 +207,55 @@ router.get('/', async (req, res) => {
 });
 
 // Update Admin Home Data
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', verifyToken, upload.single('image'), async (req, res) => {
   try {
     const { name, bio, roles, cvLink } = req.body;
-    const rolesArray = JSON.parse(roles);
+    
+    if (!name || !bio || !roles || !cvLink) {
+      return res.status(400).json({ msg: 'All fields are required' });
+    }
+
+    let imageUrl;
+    if (req.file) {
+      try {
+        imageUrl = await uploadToCloudinary(req.file.buffer);
+      } catch (uploadErr) {
+        console.error('Cloudinary upload error:', uploadErr);
+        return res.status(500).json({ msg: 'Image upload failed' });
+      }
+    }
 
     let data = await AdminHome.findOne().sort({ _id: -1 });
     
     if (!data) {
-      // Create new if doesn't exist
       data = new AdminHome({
         name,
         bio,
-        roles: rolesArray,
-        imageUrl: req.file ? req.file.path : '',
-        cvLink
+        roles: JSON.parse(roles),
+        cvLink,
+        imageUrl: imageUrl || ''
       });
     } else {
-      // Update existing
+      // Delete old image if new one is uploaded
+      if (imageUrl && data.imageUrl) {
+        try {
+          const publicId = data.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+          await cloudinary.uploader.destroy(publicId);
+        } catch (err) {
+          console.error('Error deleting old image:', err);
+        }
+      }
+      
       data.name = name;
       data.bio = bio;
-      data.roles = rolesArray;
+      data.roles = JSON.parse(roles);
       data.cvLink = cvLink;
-
-      // If new image uploaded
-      if (req.file) {
-        // Delete old image from Cloudinary if exists
-        if (data.imageUrl) {
-          try {
-            const publicId = data.imageUrl.split('/').slice(-2).join('/').split('.')[0];
-            await cloudinary.uploader.destroy(publicId);
-          } catch (err) {
-            console.error('Error deleting old image:', err);
-          }
-        }
-        data.imageUrl = req.file.path;
-      }
+      if (imageUrl) data.imageUrl = imageUrl;
     }
 
     await data.save();
     res.json({ 
-      msg: 'Admin Home data updated successfully',
+      msg: 'Data updated successfully',
       data: {
         name: data.name,
         bio: data.bio,

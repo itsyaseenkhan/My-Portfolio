@@ -418,7 +418,13 @@ function HomeForm() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get("https://my-portfolio-backends.onrender.com/api/adminhome");
+      const token = localStorage.getItem('adminToken');
+      const res = await axios.get("https://my-portfolio-backends.onrender.com/api/adminhome", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
       setForm({
         name: res.data.name || "",
         roles: res.data.roles ? res.data.roles.join(", ") : "",
@@ -429,7 +435,7 @@ function HomeForm() {
       });
     } catch (err) {
       console.error("Error fetching data:", err);
-      showMessage("Failed to load data", "error");
+      showMessage("Failed to load data. Please login again.", "error");
     }
   };
 
@@ -450,50 +456,48 @@ function HomeForm() {
     }
   };
 
-  const uploadToCloudinary = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'portfolio_preset'); // Create this in Cloudinary
-    
-    const response = await axios.post(
-      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
-      formData
-    );
-    return response.data.secure_url;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ text: "", type: "" });
 
     try {
-      let imageUrl = form.imagePreview;
-      
-      // Upload new image if selected
-      if (form.imageFile) {
-        imageUrl = await uploadToCloudinary(form.imageFile);
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error("No authentication token found");
       }
 
-      // Prepare the data to send to backend
-      const dataToSend = {
-        name: form.name,
-        bio: form.bio,
-        roles: form.roles.split(",").map(r => r.trim()),
-        cvLink: form.cvLink,
-        imageUrl: imageUrl
-      };
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('bio', form.bio);
+      formData.append('roles', JSON.stringify(form.roles.split(",").map(r => r.trim())));
+      formData.append('cvLink', form.cvLink);
+      
+      if (form.imageFile) {
+        formData.append('image', form.imageFile);
+      }
 
-      await axios.post(
+      const response = await axios.post(
         "https://my-portfolio-backends.onrender.com/api/adminhome", 
-        dataToSend
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
 
       showMessage("Data saved successfully!", "success");
       fetchData();
     } catch (err) {
-      console.error("Error saving data:", err);
-      showMessage("Error saving data. Please try again.", "error");
+      console.error("Save error:", err);
+      showMessage(
+        err.response?.data?.msg || 
+        err.message || 
+        "Error saving data. Please try again.",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -637,6 +641,10 @@ function HomeForm() {
               src={form.imagePreview} 
               alt="Preview" 
               style={styles.imagePreview}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/default-profile.jpg';
+              }}
             />
           )}
         </div>

@@ -166,7 +166,6 @@
 
 // export default Home;
 
-
 import React, { useEffect, useState, useRef } from 'react';
 import Typed from 'typed.js';
 import '../Pages/Hero.css';
@@ -187,7 +186,15 @@ const Home = () => {
       try {
         const response = await fetch("https://my-portfolio-backends.onrender.com/api/adminhome");
         const result = await response.json();
-        setData(result);
+        
+        // Ensure image URL is absolute
+        const imageUrl = result.imageUrl 
+          ? result.imageUrl.includes('http') 
+            ? result.imageUrl 
+            : `https://my-portfolio-backends.onrender.com/${result.imageUrl}`
+          : '/default-profile.jpg';
+        
+        setData({ ...result, imageUrl });
         setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
