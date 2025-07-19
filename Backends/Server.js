@@ -108,28 +108,56 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+const cloudinary = require("cloudinary").v2;
 
 const app = express();
 
+// ✅ Cloudinary Configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
+
+// ✅ Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL,
-  credentials: true
+  credentials: true,
 }));
-
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-// DB Connect
+// ✅ Routes
+const adminAuthRoutes = require("./routes/adminAuth");
+const adminHomeRoutes = require("./routes/adminHome");
+const aboutRoutes = require("./routes/Adminabout");
+const skillRoutes = require("./routes/SkillFoam");
+const projectRoutes = require("./routes/ProjectRoutes");
+const educationRoutes = require("./routes/educationRoutes");
+const contactRoutes = require("./routes/contact");
+
+app.use("/api/admin", adminAuthRoutes);
+app.use("/api/adminhome", adminHomeRoutes);
+app.use("/api/about", aboutRoutes);
+app.use("/api/SkillFoam", skillRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/AdminEducation", educationRoutes);
+app.use("/api/contact", contactRoutes);
+
+// ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => console.error("❌ MongoDB Error:", err));
+  useUnifiedTopology: true,
+  dbName: "Profile",
+}).then(() => {
+  console.log("✅ MongoDB Connected");
+}).catch((err) => {
+  console.error("❌ MongoDB Connection Error:", err.message);
+});
 
-// Routes
-const adminHomeRoutes = require("./routes/adminHome");
-app.use("/api/adminhome", adminHomeRoutes);
-
-// Start server
+// ✅ Server Listen
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running at port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
