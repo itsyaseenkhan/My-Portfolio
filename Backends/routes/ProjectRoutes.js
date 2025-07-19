@@ -1,87 +1,182 @@
-const express = require('express');
+// const express = require('express');
+// const router = express.Router();
+// const multer = require('multer');
+// const Project = require('../Models/Project'); // Assuming you have a Project model
+
+// // Configure multer for file uploads
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/projects/');
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + '-' + file.originalname);
+//   }
+// });
+
+// const upload = multer({ storage: storage });
+
+// // Get all projects
+// router.get('/', async (req, res) => {
+//   try {
+//     const projects = await Project.find();
+//     res.json(projects);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+// // Create a new project
+// router.post('/', upload.single('image'), async (req, res) => {
+//   try {
+//     const { title, description, link } = req.body;
+    
+//     const project = new Project({
+//       title,
+//       description,
+//       link,
+//       image: req.file ? '/uploads/projects/' + req.file.filename : null
+//     });
+
+//     const savedProject = await project.save();
+//     res.status(201).json(savedProject);
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// });
+
+// // Update a project
+// router.put('/:id', upload.single('image'), async (req, res) => {
+//   try {
+//     const { title, description, link } = req.body;
+//     const updateData = { title, description, link };
+    
+//     if (req.file) {
+//       updateData.image = '/uploads/projects/' + req.file.filename;
+//     }
+
+//     const updatedProject = await Project.findByIdAndUpdate(
+//       req.params.id,
+//       updateData,
+//       { new: true }
+//     );
+
+//     if (!updatedProject) {
+//       return res.status(404).json({ message: 'Project not found' });
+//     }
+
+//     res.json(updatedProject);
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// });
+
+// // Delete a project
+// router.delete('/:id', async (req, res) => {
+//   try {
+//     const deletedProject = await Project.findByIdAndDelete(req.params.id);
+    
+//     if (!deletedProject) {
+//       return res.status(404).json({ message: 'Project not found' });
+//     }
+
+//     res.json({ message: 'Project deleted successfully' });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+// module.exports = router;
+const express = require("express");
 const router = express.Router();
+const { storage, deleteFromCloudinary } = require('../utils/cloudinary');
 const multer = require('multer');
-const Project = require('../Models/Project'); // Assuming you have a Project model
+const Project = require("../models/Project");
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/projects/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
-
-const upload = multer({ storage: storage });
 
 // Get all projects
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const projects = await Project.find();
+    const projects = await Project.find().sort({ createdAt: -1 });
     res.json(projects);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error fetching projects:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-// Create a new project
-router.post('/', upload.single('image'), async (req, res) => {
+// Create new project
+router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { title, description, link } = req.body;
-    
-    const project = new Project({
+
+    const newProject = new Project({
       title,
       description,
       link,
-      image: req.file ? '/uploads/projects/' + req.file.filename : null
+      image: req.file?.path || null,
     });
 
-    const savedProject = await project.save();
+    const savedProject = await newProject.save();
     res.status(201).json(savedProject);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Error creating project:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-// Update a project
-router.put('/:id', upload.single('image'), async (req, res) => {
+// Update project
+router.put("/:id", upload.single("image"), async (req, res) => {
   try {
-    const { title, description, link } = req.body;
-    const updateData = { title, description, link };
-    
-    if (req.file) {
-      updateData.image = '/uploads/projects/' + req.file.filename;
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // Delete old image if new one is uploaded
+    if (req.file && project.image) {
+      await deleteFromCloudinary(project.image);
     }
 
     const updatedProject = await Project.findByIdAndUpdate(
       req.params.id,
-      updateData,
+      {
+        title: req.body.title,
+        description: req.body.description,
+        link: req.body.link,
+        image: req.file?.path || project.image
+      },
       { new: true }
     );
 
-    if (!updatedProject) {
-      return res.status(404).json({ message: 'Project not found' });
-    }
-
     res.json(updatedProject);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Error updating project:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-// Delete a project
-router.delete('/:id', async (req, res) => {
+// Delete project
+router.delete("/:id", async (req, res) => {
   try {
-    const deletedProject = await Project.findByIdAndDelete(req.params.id);
-    
-    if (!deletedProject) {
-      return res.status(404).json({ message: 'Project not found' });
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
     }
 
-    res.json({ message: 'Project deleted successfully' });
+    // Delete image from Cloudinary
+    if (project.image) {
+      await deleteFromCloudinary(project.image);
+    }
+
+    await Project.findByIdAndDelete(req.params.id);
+    res.json({ message: "Project deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error deleting project:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

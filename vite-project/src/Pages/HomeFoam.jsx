@@ -1,201 +1,201 @@
-// import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
-// function HomeForm() {
-//   const [form, setForm] = useState({
-//     name: "",
-//     roles: "",
-//     bio: "",
-//     imageFile: null,
-//     cvLink: ""
-//   });
+function HomeForm() {
+  const [form, setForm] = useState({
+    name: "",
+    roles: "",
+    bio: "",
+    imageFile: null,
+    cvLink: ""
+  });
 
-//   useEffect(() => {
-//     fetch("https://my-portfolio-backends.onrender.com/api/adminhome")
-//       .then(res => res.json())
-//       .then(data => {
-//         setForm(f => ({
-//           ...f,
-//           name: data.name || "",
-//           roles: data.roles ? data.roles.join(", ") : "",
-//           bio: data.bio || "",
-//           cvLink: data.cvLink || ""
-//         }));
-//       });
-//   }, []);
+  useEffect(() => {
+    fetch("https://my-portfolio-backends.onrender.com/api/adminhome")
+      .then(res => res.json())
+      .then(data => {
+        setForm(f => ({
+          ...f,
+          name: data.name || "",
+          roles: data.roles ? data.roles.join(", ") : "",
+          bio: data.bio || "",
+          cvLink: data.cvLink || ""
+        }));
+      });
+  }, []);
 
-//   const handleChange = (e) => {
-//     const { name, value, files } = e.target;
-//     if (files && files.length > 0) {
-//       setForm({ ...form, imageFile: files[0] }); 
-//     } else {
-//       setForm({ ...form, [name]: value });
-//     }
-//   };
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (files && files.length > 0) {
+      setForm({ ...form, imageFile: files[0] }); 
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+  };
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const payload = new FormData();
-//     payload.append("name", form.name);
-//     payload.append("roles", JSON.stringify(form.roles.split(",").map(r => r.trim())));
-//     payload.append("bio", form.bio);
-//     payload.append("cvLink", form.cvLink); 
-//     if (form.imageFile) payload.append("image", form.imageFile);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = new FormData();
+    payload.append("name", form.name);
+    payload.append("roles", JSON.stringify(form.roles.split(",").map(r => r.trim())));
+    payload.append("bio", form.bio);
+    payload.append("cvLink", form.cvLink); 
+    if (form.imageFile) payload.append("image", form.imageFile);
 
-//     await fetch("https://my-portfolio-backends.onrender.com/api/adminhome", {
-//       method: "POST",
-//       body: payload
-//     });
+    await fetch("https://my-portfolio-backends.onrender.com/api/adminhome", {
+      method: "POST",
+      body: payload
+    });
 
-//     alert("Data saved successfully!");
-//   };
+    alert("Data saved successfully!");
+  };
 
-//   return (
-//     <div style={{
-//       maxWidth: "1000px",
-//       margin: "2rem auto",
-//       padding: "2rem",
-//       background: "#fff",
-//       borderRadius: "12px",
-//       boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-//       width: "90%",
-//       boxSizing: "border-box"
-//     }}>
-//       <h2 style={{
-//         textAlign: "left",
-//         marginBottom: "1.5rem",
-//         color: "#4f46e5",
-//         fontSize: "1.75rem",
-//         fontWeight: "600"
-//       }}> New Home page </h2>
+  return (
+    <div style={{
+      maxWidth: "1000px",
+      margin: "2rem auto",
+      padding: "2rem",
+      background: "#fff",
+      borderRadius: "12px",
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      width: "90%",
+      boxSizing: "border-box"
+    }}>
+      <h2 style={{
+        textAlign: "left",
+        marginBottom: "1.5rem",
+        color: "#4f46e5",
+        fontSize: "1.75rem",
+        fontWeight: "600"
+      }}> New Home page </h2>
       
-//       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-//         <div>
-//           <label style={styles.label}>Name</label>
-//           <input 
-//             style={styles.input} 
-//             name="name" 
-//             placeholder="Enter your name" 
-//             value={form.name} 
-//             onChange={handleChange} 
-//           />
-//         </div>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div>
+          <label style={styles.label}>Name</label>
+          <input 
+            style={styles.input} 
+            name="name" 
+            placeholder="Enter your name" 
+            value={form.name} 
+            onChange={handleChange} 
+          />
+        </div>
         
-//         <div>
-//           <label style={styles.label}>Roles (comma-separated)</label>
-//           <input 
-//             style={styles.input} 
-//             name="roles" 
-//             placeholder="Developer, Designer, etc." 
-//             value={form.roles} 
-//             onChange={handleChange} 
-//           />
-//         </div>
+        <div>
+          <label style={styles.label}>Roles (comma-separated)</label>
+          <input 
+            style={styles.input} 
+            name="roles" 
+            placeholder="Developer, Designer, etc." 
+            value={form.roles} 
+            onChange={handleChange} 
+          />
+        </div>
         
-//         <div>
-//           <label style={styles.label}>Bio</label>
-//           <textarea 
-//             style={styles.textarea} 
-//             name="bio" 
-//             placeholder="Tell us about yourself..." 
-//             value={form.bio} 
-//             onChange={handleChange}
-//           ></textarea>
-//         </div>
+        <div>
+          <label style={styles.label}>Bio</label>
+          <textarea 
+            style={styles.textarea} 
+            name="bio" 
+            placeholder="Tell us about yourself..." 
+            value={form.bio} 
+            onChange={handleChange}
+          ></textarea>
+        </div>
         
-//         <div>
-//           <label style={styles.label}>Profile Image</label>
-//           <input 
-//             style={{ ...styles.input, padding: "0.5rem" }} 
-//             name="image" 
-//             type="file" 
-//             accept="image/*" 
-//             onChange={handleChange} 
-//           />
-//         </div>
+        <div>
+          <label style={styles.label}>Profile Image</label>
+          <input 
+            style={{ ...styles.input, padding: "0.5rem" }} 
+            name="image" 
+            type="file" 
+            accept="image/*" 
+            onChange={handleChange} 
+          />
+        </div>
         
-//         <div>
-//           <label style={styles.label}>CV Link (URL)</label>
-//           <input 
-//             style={styles.input} 
-//             name="cvLink" 
-//             placeholder="https://example.com/cv.pdf" 
-//             value={form.cvLink} 
-//             onChange={handleChange} 
-//           />
-//         </div>
+        <div>
+          <label style={styles.label}>CV Link (URL)</label>
+          <input 
+            style={styles.input} 
+            name="cvLink" 
+            placeholder="https://example.com/cv.pdf" 
+            value={form.cvLink} 
+            onChange={handleChange} 
+          />
+        </div>
         
-//         <button 
-//           style={styles.button} 
-//           type="submit"
-//         >
-//           Save Changes
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
+        <button 
+          style={styles.button} 
+          type="submit"
+        >
+          Save Changes
+        </button>
+      </form>
+    </div>
+  );
+}
 
-// const styles = {
-//   input: {
-//     width: "100%", 
-//     padding: "0.75rem 1rem", 
-//     border: "1px solid #e2e8f0", 
-//     borderRadius: "0.375rem",
-//     fontSize: "0.9375rem", 
-//     transition: "all 0.2s ease",
-//     boxSizing: "border-box",
-//     backgroundColor: "#f8fafc",
-//     color: "#1e293b",
-//     boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.05)",
-//     marginTop: "0.25rem"
-//   },
-//   textarea: {
-//     width: "100%", 
-//     padding: "0.75rem 1rem", 
-//     minHeight: "120px", 
-//     border: "1px solid #e2e8f0", 
-//     borderRadius: "0.375rem",
-//     fontSize: "0.9375rem", 
-//     resize: "vertical", 
-//     transition: "all 0.2s ease",
-//     boxSizing: "border-box",
-//     backgroundColor: "#f8fafc",
-//     color: "#1e293b",
-//     boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.05)",
-//     marginTop: "0.25rem",
-//     lineHeight: "1.5"
-//   },
-//   button: {
-//     width: "100%", 
-//     padding: "0.75rem", 
-//     background: "#4f46e5",
-//     color: "#fff", 
-//     border: "none", 
-//     borderRadius: "0.375rem",
-//     fontSize: "1rem", 
-//     fontWeight: "500", 
-//     cursor: "pointer",
-//     transition: "all 0.2s ease",
-//     marginTop: "0.5rem",
-//     boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-//     ":hover": {
-//       background: "#4338ca",
-//       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.15)"
-//     },
-//     ":active": {
-//       transform: "scale(0.98)"
-//     }
-//   },
-//   label: {
-//     display: "block",
-//     fontSize: "0.875rem",
-//     fontWeight: "500",
-//     color: "#334155",
-//     marginBottom: "0.25rem"
-//   }
-// };
+const styles = {
+  input: {
+    width: "100%", 
+    padding: "0.75rem 1rem", 
+    border: "1px solid #e2e8f0", 
+    borderRadius: "0.375rem",
+    fontSize: "0.9375rem", 
+    transition: "all 0.2s ease",
+    boxSizing: "border-box",
+    backgroundColor: "#f8fafc",
+    color: "#1e293b",
+    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.05)",
+    marginTop: "0.25rem"
+  },
+  textarea: {
+    width: "100%", 
+    padding: "0.75rem 1rem", 
+    minHeight: "120px", 
+    border: "1px solid #e2e8f0", 
+    borderRadius: "0.375rem",
+    fontSize: "0.9375rem", 
+    resize: "vertical", 
+    transition: "all 0.2s ease",
+    boxSizing: "border-box",
+    backgroundColor: "#f8fafc",
+    color: "#1e293b",
+    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.05)",
+    marginTop: "0.25rem",
+    lineHeight: "1.5"
+  },
+  button: {
+    width: "100%", 
+    padding: "0.75rem", 
+    background: "#4f46e5",
+    color: "#fff", 
+    border: "none", 
+    borderRadius: "0.375rem",
+    fontSize: "1rem", 
+    fontWeight: "500", 
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    marginTop: "0.5rem",
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ":hover": {
+      background: "#4338ca",
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.15)"
+    },
+    ":active": {
+      transform: "scale(0.98)"
+    }
+  },
+  label: {
+    display: "block",
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#334155",
+    marginBottom: "0.25rem"
+  }
+};
 
-// export default HomeForm;
+export default HomeForm;
 
 // import React, { useState, useEffect } from "react";
 
@@ -396,109 +396,3 @@
 
 // export default HomeForm;
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-
-const HomeForm = () => {
-  const [form, setForm] = useState({
-    name: "",
-    bio: "",
-    roles: "",
-    cvLink: "",
-    imageFile: null,
-    imagePreview: ""
-  });
-
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const fetchData = async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-      const res = await axios.get("https://your-backend-url.com/api/adminhome", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-
-      setForm({
-        name: res.data.name,
-        bio: res.data.bio,
-        roles: res.data.roles.join(", "),
-        cvLink: res.data.cvLink,
-        imageFile: null,
-        imagePreview: res.data.imageUrl,
-      });
-    } catch (err) {
-      console.error(err);
-      setMessage("Login required or error loading data.");
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (files && files.length > 0) {
-      setForm(prev => ({
-        ...prev,
-        imageFile: files[0],
-        imagePreview: URL.createObjectURL(files[0]),
-      }));
-    } else {
-      setForm(prev => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const token = localStorage.getItem("adminToken");
-    const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("bio", form.bio);
-    formData.append("roles", JSON.stringify(form.roles.split(",").map(r => r.trim())));
-    formData.append("cvLink", form.cvLink);
-    if (form.imageFile) {
-      formData.append("image", form.imageFile);
-    }
-
-    try {
-      await axios.post("https://your-backend-url.com/api/adminhome", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        }
-      });
-      setMessage("Data saved successfully!");
-      fetchData();
-    } catch (err) {
-      console.error(err);
-      setMessage("Error saving data.");
-    }
-
-    setLoading(false);
-  };
-
-  return (
-    <div>
-      <h2>Update Admin Home Info</h2>
-      {message && <p>{message}</p>}
-
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Name" required />
-        <input type="text" name="roles" value={form.roles} onChange={handleChange} placeholder="Roles (comma separated)" required />
-        <textarea name="bio" value={form.bio} onChange={handleChange} placeholder="Bio" required></textarea>
-        <input type="url" name="cvLink" value={form.cvLink} onChange={handleChange} placeholder="CV Link" required />
-        <input type="file" name="image" accept="image/*" onChange={handleChange} />
-        {form.imagePreview && <img src={form.imagePreview} alt="preview" width="100" />}
-        <button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</button>
-      </form>
-    </div>
-  );
-};
-
-export default HomeForm;
