@@ -1,40 +1,27 @@
 const express = require('express');
 const Project = require('../Models/Project');
-const { 
-  uploadSingle, 
-  handleCloudinaryUpload, 
-  deleteOldImage,
-  handleMulterError 
-} = require('../middleware/imageUpload');
-const { deleteFromCloudinary } = require('../config/cloudinary');
-
 const router = express.Router();
 
 // CREATE a new project
-router.post('/', 
-  uploadSingle('image'), 
-  handleCloudinaryUpload('projects'),
+router.post(
+  '/',
+  uploadSingle('image'),
   handleMulterError,
   async (req, res) => {
     try {
       const { title, description, link, technologies, featured } = req.body;
-      
-      // Validate required fields
+
       if (!title || !description) {
-        return res.status(400).json({ 
-          error: 'Title and description are required' 
-        });
+        return res.status(400).json({ error: 'Title and description are required' });
       }
 
       let imageData = {};
-      if (req.cloudinaryResult) {
+      if (req.file) {
         imageData = {
-          url: req.cloudinaryResult.url,
-          publicId: req.cloudinaryResult.public_id,
-          width: req.cloudinaryResult.width,
-          height: req.cloudinaryResult.height,
-          format: req.cloudinaryResult.format,
-          bytes: req.cloudinaryResult.bytes
+          buffer: req.file.buffer,
+          mimetype: req.file.mimetype,
+          size: req.file.size,
+          originalName: req.file.originalname
         };
       }
 
@@ -50,7 +37,7 @@ router.post('/',
       const newProject = new Project(projectData);
       await newProject.save();
 
-      res.status(201).json({ 
+      res.status(201).json({
         message: 'Project created successfully',
         project: newProject
       });
@@ -65,15 +52,14 @@ router.post('/',
 router.get('/', async (req, res) => {
   try {
     const { featured, limit, sort } = req.query;
-    
+
     let query = {};
     if (featured === 'true') {
       query.featured = true;
     }
-    
+
     let projectsQuery = Project.find(query);
-    
-    // Sort options
+
     if (sort === 'newest') {
       projectsQuery = projectsQuery.sort({ createdAt: -1 });
     } else if (sort === 'oldest') {
@@ -81,12 +67,11 @@ router.get('/', async (req, res) => {
     } else {
       projectsQuery = projectsQuery.sort({ updatedAt: -1 });
     }
-    
-    // Limit results
+
     if (limit && !isNaN(limit)) {
       projectsQuery = projectsQuery.limit(parseInt(limit));
     }
-    
+
     const projects = await projectsQuery;
     res.json({
       success: true,
@@ -106,10 +91,7 @@ router.get('/:id', async (req, res) => {
     if (!project) {
       return res.status(404).json({ error: 'Project not found' });
     }
-    res.json({
-      success: true,
-      project
-    });
+    res.json({ success: true, project });
   } catch (err) {
     console.error('Error fetching project:', err);
     res.status(500).json({ error: 'Failed to fetch project', details: err.message });
@@ -117,16 +99,14 @@ router.get('/:id', async (req, res) => {
 });
 
 // UPDATE a project
-router.put('/:id', 
-  uploadSingle('image'), 
-  deleteOldImage,
-  handleCloudinaryUpload('projects'),
+router.put(
+  '/:id',
+  uploadSingle('image'),
   handleMulterError,
   async (req, res) => {
     try {
       const { title, description, link, technologies, featured } = req.body;
-      
-      // Find existing project
+
       const existingProject = await Project.findById(req.params.id);
       if (!existingProject) {
         return res.status(404).json({ error: 'Project not found' });
@@ -141,37 +121,24 @@ router.put('/:id',
         updatedAt: new Date()
       };
 
-      // Handle image update
-      if (req.cloudinaryResult) {
-        // Delete old image if it exists
-        if (existingProject.image && existingProject.image.publicId) {
-          try {
-            await deleteFromCloudinary(existingProject.image.publicId);
-          } catch (deleteError) {
-            console.error('Failed to delete old image:', deleteError);
-          }
-        }
-        
-        // Set new image data
+      if (req.file) {
         updates.image = {
-          url: req.cloudinaryResult.url,
-          publicId: req.cloudinaryResult.public_id,
-          width: req.cloudinaryResult.width,
-          height: req.cloudinaryResult.height,
-          format: req.cloudinaryResult.format,
-          bytes: req.cloudinaryResult.bytes
+          buffer: req.file.buffer,
+          mimetype: req.file.mimetype,
+          size: req.file.size,
+          originalName: req.file.originalname
         };
       }
 
       const updatedProject = await Project.findByIdAndUpdate(
-        req.params.id, 
-        updates, 
+        req.params.id,
+        updates,
         { new: true, runValidators: true }
       );
 
-      res.json({ 
-        message: 'Project updated successfully', 
-        project: updatedProject 
+      res.json({
+        message: 'Project updated successfully',
+        project: updatedProject
       });
     } catch (err) {
       console.error('Error updating project:', err);
@@ -188,18 +155,8 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    // Delete image from Cloudinary if it exists
-    if (project.image && project.image.publicId) {
-      try {
-        await deleteFromCloudinary(project.image.publicId);
-      } catch (deleteError) {
-        console.error('Failed to delete image from Cloudinary:', deleteError);
-        // Continue with project deletion even if image deletion fails
-      }
-    }
-
     await Project.findByIdAndDelete(req.params.id);
-    res.json({ 
+    res.json({
       message: 'Project deleted successfully',
       deletedProject: {
         id: project._id,
