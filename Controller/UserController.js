@@ -253,7 +253,10 @@ export const forgotPassword = catchAsyncError(async (req, res, next) => {
 export const resetPassword = catchAsyncError(async (req, res, next) => {
   const { token } = req.params;
 
-  const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
 
   const user = await User.findOne({
     resetPasswordToken,
@@ -274,16 +277,16 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("Password and confirm password do not match", 400));
   }
 
+  // ✅ Correct field name
   user.password = password;
+
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
 
   await user.save();
 
-  // ✅ No auto-login
   res.status(200).json({
     success: true,
     message: "Password reset successfully. Please login.",
   });
 });
-
