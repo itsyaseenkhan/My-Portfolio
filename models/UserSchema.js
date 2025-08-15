@@ -87,8 +87,8 @@ typewritertext: {
 
 // Generating JSon Web token
  UserSchema.methods.generateJSonWebToken = function(){
- return jwt.sign({id:this._id}, process.env.Jwt_SECRET_KEY,{
-   expiresIn: process.env.Jwt_EXPIRES
+ return jwt.sign({id:this._id}, process.env.JWT_SECRET_KEY,{
+   expiresIn: process.env.JWT_EXPIRES
  });
  };
 
