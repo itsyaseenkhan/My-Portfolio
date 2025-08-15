@@ -274,7 +274,7 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("Password and confirm password do not match", 400));
   }
 
-  user.password = password;
+  user.Password = password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
 
