@@ -53,7 +53,7 @@ const UserSchema = new mongoose.Schema({
   },
  
  
-typewriterText: {  // <-- capital T
+typewriterText: {
   type: [String],
   required: true,
   validate: {
@@ -63,7 +63,6 @@ typewriterText: {  // <-- capital T
     message: 'At least one typewriternaam is required'
   }
 },
-
 
   instagramURL: String,
   linkedInURL: String,
