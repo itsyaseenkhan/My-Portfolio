@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: [process.env.PORTFOILO_URL, process.env.DASHBOARD_URL],
+    origin: [process.env.PORTFOLIO_URL, process.env.DASHBOARD_URL],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
