@@ -227,7 +227,7 @@ export const forgotPassword = catchAsyncError(async (req, res, next) => {
 
   const resetPasswordUrl = `${process.env.DASHBOARD_URL}/Password/reset/${resetToken}`;
 
-  const message = `Your Reset Password Token is:\n\n ${resetPasswordUrl}\n\n If you did not request this, please ignore.`;
+  const message = `Your Reset Password Token is:\n\n ${resetPasswordUrl}\n\n If you did not request this please Ignore this Message .`;
 
   try {
     await sendEmail({
@@ -235,7 +235,7 @@ export const forgotPassword = catchAsyncError(async (req, res, next) => {
       subject: `Personal Portfolio Dashboard Password Recovery`,
       message,
     });
-
+      
     res.status(201).json({
       success: true,
       message: `Email sent to ${user.email} successfully`,
