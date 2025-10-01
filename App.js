@@ -15,6 +15,7 @@ import AboutRouter from "./router/AboutRouter.js"
 const app = express();
 
 dotenv.config({ path: "./config/config.env" });
+console.log("Allowed origins:", allowedOrigins); 
 
 // Request logger middleware
 app.use((req, res, next) => {
@@ -22,14 +23,18 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  cors({
-    origin: [process.env.PORTFOLIO_URL,
-    process.env.DASHBOARD_URL],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // Postman / server requests allow
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS not allowed for ${origin}`));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"]
+}));
 
 
 app.use(cookieParser());
