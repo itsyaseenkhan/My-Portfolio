@@ -22,13 +22,14 @@ app.use((req, res, next) => {
   next();
 });
 
+console.log("Allowed origins:", process.env.PORTFOLIO_URL, process.env.DASHBOARD_URL);
 app.use(
   cors({
     origin: [process.env.PORTFOLIO_URL,
-    process.env.DASHBOARD_URL],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
+      process.env.DASHBOARD_URL],
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      credentials: true,
+    })
 );
 
 
