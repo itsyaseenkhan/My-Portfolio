@@ -3,7 +3,7 @@ import { ErrorHandler } from "../middlewares/error.js";
 import { User } from "../models/UserSchema.js";
 import { v2 as cloudinary } from "cloudinary";
 import { generateToken } from "../utils/jwtToken.js";
-import { sendEmail } from "../utils/sendEmail.js ";
+import sendEmail from  "../utils/sendEmail.js";
 import crypto from "crypto";
 
 // REGISTER
